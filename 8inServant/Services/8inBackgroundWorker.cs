@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace _8inServant.Services
 {
-    public class _8inBackgroundWorker : BackgroundService
+    public class _8inBackgroundWorker : IHostedService
     {
         private IChat _chat;
         private ILogger _logger;
@@ -18,14 +18,14 @@ namespace _8inServant.Services
             _logger = logger;
         }
 
-
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                await Task.Delay(1000, stoppingToken);
-            }
+            _chat.Connect();
+        }
+
+        public async Task StopAsync(CancellationToken cancellationToken)
+        {
+            
         }
     }
 }
