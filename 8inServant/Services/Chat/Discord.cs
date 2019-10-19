@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
@@ -39,9 +40,33 @@ namespace _8inServant.Services
 
         private async Task DiscordUserUpdated(SocketUser preUser, SocketUser postUser)
         {
-            if (postUser.IsBot == false && postUser.Activity != null)
+            if (postUser.IsBot == false && postUser.Activity != null && preUser.Activity?.Name != postUser.Activity.Name)
             {
+                foreach (var mutualGuild in postUser.MutualGuilds)
+                {
+                    var usrList = mutualGuild.Users.Where(u => u.Activity?.Name == postUser.Activity.Name).ToList();
+                    //Assume general channel for now.
+                    if (usrList.Count > 1)
+                    {
+                        SocketGuildChannel sgc;
+                        if (mutualGuild.Channels.Any(c => c.Name == "general"))
+                        {
+                            sgc = mutualGuild.Channels.First(gc => gc.Name == "general");
+                        }
+                        else
+                        {
+                            //Catch all. eventually we want to use a value from the db that the guild has set.
+                            sgc = mutualGuild.Channels.First();
+                        }
 
+
+                        if(sgc is IMessageChannel imc)
+                        {
+                            await imc.SendMessageAsync($"Are you lot really playing {postUser.Activity.Name}");
+                        }
+                        
+                    }
+                }
             }
         }
 
@@ -55,7 +80,16 @@ namespace _8inServant.Services
                 await message.Channel.SendMessageAsync("pong motherfucker!");
 
             if (message.Content == "-whoami")
-                await message.Channel.SendMessageAsync($"You are: {message.Author.Username}");
+                await message.Channel.SendMessageAsync($"You are: {message.Author.Username}");     
+
+            if (message.Content == "-version")
+            {
+                System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+                FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+                string version = fvi.FileVersion;
+                await message.Channel.SendMessageAsync($"My version is: {version}");
+            }
+                
         }
     }
 }
