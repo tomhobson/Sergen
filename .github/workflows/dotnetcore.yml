@@ -15,15 +15,19 @@ jobs:
     - name: Build with dotnet
       run: |
         dotnet build --configuration Release
-        ls -a
+        ls 8inServant/bin/Release -a
+    - name: Generate build number
+      uses: einaregilsson/build-number@v2
+      with:
+        token: ${{secrets.github_token}}
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: $BUILD_NUMBER
+        release_name: Release $BUILD_NUMBER
         body: |
           Changes in this Release
           - Github actions man
