@@ -19,12 +19,16 @@ jobs:
       run: |
         dotnet build --configuration Release
         ls 8inServant/bin/Release -a
-    - name: Tag
-      uses: K-Phoen/semver-release-action@master
+    - name: Release
+      uses: "marvinpinto/action-automatic-releases@latest"
       with:
-        release_branch: master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Development Build"
+        files: |
+          LICENSE.txt
+          *.dll
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
