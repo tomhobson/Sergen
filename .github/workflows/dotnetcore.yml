@@ -16,23 +16,12 @@ jobs:
       run: |
         dotnet build --configuration Release
         ls 8inServant/bin/Release -a
-    - name: Generate build number
-      uses: einaregilsson/build-number@v2
+    - name: Tag
+      uses: K-Phoen/semver-release-action@master
       with:
-        token: ${{secrets.github_token}}
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
+        release_branch: master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: $BUILD_NUMBER
-        release_name: Release $BUILD_NUMBER
-        body: |
-          Changes in this Release
-          - Github actions man
-        draft: false
-        prerelease: false
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
