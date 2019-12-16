@@ -14,11 +14,11 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 2.2.108
+        dotnet-version: 3.0.100
     - name: Build with dotnet
       run: |
         dotnet build --configuration Release
-        ls 8inServant/bin/Release -a
+        ls 8inServant/bin/Release/Ne -a
     - name: Release
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
@@ -29,17 +29,3 @@ jobs:
         files: |
           LICENSE.txt
           *.dll
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    steps:
-    - name: executing remote ssh commands using password
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        port: ${{ secrets.PORT }}
-        script: |
-          pwd
-          ls -a
