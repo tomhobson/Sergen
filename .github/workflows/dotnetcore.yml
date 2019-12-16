@@ -1,6 +1,8 @@
 name: .NET Core
 
-on: [push]
+on: 
+  push:
+    - master
 
 jobs:
   build:
