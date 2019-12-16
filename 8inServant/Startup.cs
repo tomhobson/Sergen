@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using _8inServant.Services;
+using _8inServant.Services.Containers;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.AspNetCore.Builder;
@@ -42,6 +43,7 @@ namespace _8inServant
             }));
 
             services.AddSingleton<IChat, Services.Discord>();
+            services.AddSingleton<IContainerInterface, DockerInterface>();
             services.AddHostedService<_8inBackgroundWorker>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -65,7 +67,6 @@ namespace _8inServant
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            app.UseMvc();
         }
     }
 }

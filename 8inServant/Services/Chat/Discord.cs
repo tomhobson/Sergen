@@ -7,20 +7,25 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
+using _8inServant.Services.Containers;
 
 namespace _8inServant.Services
 {
     public class Discord : IChat
     {
         private readonly DiscordSocketClient _discord;
+
+        private readonly IContainerInterface _containers;
         private readonly IConfiguration _config;
 
         // DiscordSocketClient, CommandService, and IConfigurationRoot are injected automatically from the IServiceProvider
         public Discord(
             DiscordSocketClient discord,
+            IContainerInterface containers,
             IConfiguration config)
         {
             _config = config;
+            _containers = containers;
             _discord = discord;
         }
 
@@ -77,7 +82,7 @@ namespace _8inServant.Services
                 return;
 
             if (message.Content == "-ping")
-                await message.Channel.SendMessageAsync("pong motherfucker!");
+                await message.Channel.SendMessageAsync("pong!");
 
             if (message.Content == "-whoami")
                 await message.Channel.SendMessageAsync($"You are: {message.Author.Username}");     
@@ -89,7 +94,16 @@ namespace _8inServant.Services
                 string version = fvi.FileVersion;
                 await message.Channel.SendMessageAsync($"My version is: {version}");
             }
-                
+            if(message.Content == "-dockerps")
+            {
+                string allcontainers = "";
+                var allconts = await _containers.GetRunningContainers();
+                foreach(var stri in allconts)  
+                {
+                    allcontainers = allcontainers + $"\n {stri}";
+                }
+                await message.Channel.SendMessageAsync($"Running containers are: {allcontainers}");
+            }
         }
     }
 }
