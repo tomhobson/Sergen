@@ -8,5 +8,7 @@ namespace _8inServant.Services
     public interface IChat
     {
         void Connect();
+
+        string GetUsername(ulong userID);
     }
 }

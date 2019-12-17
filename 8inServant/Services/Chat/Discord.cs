@@ -8,25 +8,25 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using _8inServant.Services.Containers;
+using _8inServant.Services.Processor;
 
 namespace _8inServant.Services
 {
     public class Discord : IChat
     {
         private readonly DiscordSocketClient _discord;
-
-        private readonly IContainerInterface _containers;
+        private readonly IChatProcessor _chatProcessor;
         private readonly IConfiguration _config;
 
         // DiscordSocketClient, CommandService, and IConfigurationRoot are injected automatically from the IServiceProvider
         public Discord(
             DiscordSocketClient discord,
-            IContainerInterface containers,
+            IChatProcessor chatProcessor,
             IConfiguration config)
         {
-            _config = config;
-            _containers = containers;
             _discord = discord;
+            _config = config;
+            _chatProcessor = chatProcessor;
         }
 
         public async void Connect()
@@ -41,6 +41,11 @@ namespace _8inServant.Services
             _discord.GuildMemberUpdated += DiscordUserUpdated;
             
             _discord.MessageReceived += DiscordMessageRecieved;
+        }
+
+        public string GetUsername(ulong userID)
+        {
+            return _discord.GetUser(userID).Username;
         }
 
         private async Task DiscordUserUpdated(SocketUser preUser, SocketUser postUser)
@@ -60,16 +65,15 @@ namespace _8inServant.Services
                         }
                         else
                         {
-                            //Catch all. eventually we want to use a value from the db that the guild has set.
+                            // Catch all. eventually we want to use a value from the db that the guild has set.
+                            // Could probably do this with -configure
                             sgc = mutualGuild.Channels.First();
                         }
-
 
                         if(sgc is IMessageChannel imc)
                         {
                             await imc.SendMessageAsync($"Are you lot really playing {postUser.Activity.Name}");
                         }
-                        
                     }
                 }
             }
@@ -81,28 +85,11 @@ namespace _8inServant.Services
             if (message.Author.Id == _discord.CurrentUser.Id)
                 return;
 
-            if (message.Content == "-ping")
-                await message.Channel.SendMessageAsync("pong!");
+            var response = await _chatProcessor.GetChatResponse(message.Author.Id, message.Content);
 
-            if (message.Content == "-whoami")
-                await message.Channel.SendMessageAsync($"You are: {message.Author.Username}");     
-
-            if (message.Content == "-version")
+            if (response != null)
             {
-                System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-                FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-                string version = fvi.FileVersion;
-                await message.Channel.SendMessageAsync($"My version is: {version}");
-            }
-            if(message.Content == "-dockerps")
-            {
-                string allcontainers = "";
-                var allconts = await _containers.GetRunningContainers();
-                foreach(var stri in allconts)  
-                {
-                    allcontainers = allcontainers + $"\n {stri}";
-                }
-                await message.Channel.SendMessageAsync($"Running containers are: {allcontainers}");
+                await message.Channel.SendMessageAsync(response);
             }
         }
     }

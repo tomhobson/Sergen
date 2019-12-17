@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace _8inServant.Services.Processor
+namespace _8inServant.Services
 {
-    interface IUpdateProcessor
+    public interface IChatContext
     {
+        string GetUsername(ulong userID);
     }
 }

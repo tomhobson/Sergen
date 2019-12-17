@@ -1,15 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using _8inServant.Services;
 using _8inServant.Services.Containers;
+using _8inServant.Services.Processor;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -43,6 +39,8 @@ namespace _8inServant
             }));
 
             services.AddSingleton<IChat, Services.Discord>();
+            services.AddSingleton<IChatProcessor, ChatProcessor>();
+            services.AddSingleton<IChatContext, DiscordContext>();
             services.AddSingleton<IContainerInterface, DockerInterface>();
             services.AddHostedService<_8inBackgroundWorker>();
 

@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace _8inServant.Services.Processor
 {
-    public class UpdateProcessor
+    public interface IChatProcessor
     {
-        
+        Task<string> GetChatResponse(ulong senderID, string input);
     }
 }
