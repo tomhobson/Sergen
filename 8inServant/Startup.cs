@@ -1,14 +1,17 @@
 using _8inServant.Services;
 using _8inServant.Services.Containers;
-using _8inServant.Services.Processor;
+using _8inServant.Services.ServerStore;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using _8inServant.Services.Chat.ChatEventHandler;
+using _8inServant.Services.Chat.ChatProcessor;
+using _8inServant.Services.Chat.ChatContext;
 
 namespace _8inServant
 {
@@ -38,17 +41,16 @@ namespace _8inServant
                 MessageCacheSize = 1000 // Cache 1,000 messages per channel
             }));
 
-            services.AddSingleton<IChat, Services.Discord>();
+            services.AddSingleton<IChatEventHandler, DiscordEventHandler>();
             services.AddSingleton<IChatProcessor, ChatProcessor>();
             services.AddSingleton<IChatContext, DiscordContext>();
             services.AddSingleton<IContainerInterface, DockerInterface>();
+            services.AddSingleton<IServerStore, JsonServerStore>();
             services.AddHostedService<_8inBackgroundWorker>();
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

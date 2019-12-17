@@ -1,0 +1,11 @@
+{
+    "serverName": "Minecraft",
+    "containerName": "itzg/minecraft-server",
+    "containerType": "_8inServant.Services.Containers.DockerInterface",
+    "ports": [
+        25565
+    ],
+    "environmentalVariables": {
+        "EULA": "True"
+    }
+  }
