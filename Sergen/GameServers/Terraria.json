@@ -1,0 +1,9 @@
+{
+  "serverName": "Terraria",
+  "containerName": "topdockercat/terraria-server-vanilla",
+  "containerType": "Sergen.Services.Containers.DockerInterface",
+  "ports": [
+    7777
+  ],
+  "environmentalVariables": null
+}
