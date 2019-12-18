@@ -5,8 +5,8 @@ namespace _8inServant.Services.ServerStore
 {
     public interface IServerStore
     {
-         public IList<GameServer> GetAllServers(string containerType);
+         IList<GameServer> GetAllServers(string containerType);
 
-         public GameServer GetGameServerByName(string serverName, string containerType);
+         GameServer GetGameServerByName(string serverName, string containerType);
     }
 }

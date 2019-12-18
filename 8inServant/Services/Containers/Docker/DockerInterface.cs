@@ -1,15 +1,14 @@
-using System.Collections.Concurrent;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using _8inServant.Data;
+using _8inServant.Services.Chat.ChatResponseToken;
 using Docker.DotNet;
 using Docker.DotNet.Models;
-using Newtonsoft.Json;
-using _8inServant.Services.Chat.ChatResponseToken;
 
-namespace _8inServant.Services.Containers 
+namespace _8inServant.Services.Containers.Docker 
 {
     public class DockerInterface : IContainerInterface 
     {

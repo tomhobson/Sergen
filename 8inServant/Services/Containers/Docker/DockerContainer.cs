@@ -1,10 +1,9 @@
 using System;
-using System.Security.Cryptography;
 using _8inServant.Data;
 using _8inServant.Services.Chat.ChatResponseToken;
 using Docker.DotNet.Models;
 
-namespace _8inServant.Services.Containers
+namespace _8inServant.Services.Containers.Docker
 {
     public class DockerContainer
     {

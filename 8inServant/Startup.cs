@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using _8inServant.Services.Chat.ChatEventHandler;
 using _8inServant.Services.Chat.ChatProcessor;
 using _8inServant.Services.Chat.ChatContext;
+using _8inServant.Services.Containers.Docker;
 
 namespace _8inServant
 {
