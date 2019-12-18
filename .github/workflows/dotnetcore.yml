@@ -18,14 +18,13 @@ jobs:
     - name: Build with dotnet
       run: |
         dotnet build --configuration Release
-        ls 8inServant/bin/Release/Ne -a
     - name: Release
       uses: "marvinpinto/action-automatic-releases@latest"
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest"
         prerelease: true
-        title: "Development Build"
+        title: "CI Build"
         files: |
           LICENSE.txt
           *.dll
