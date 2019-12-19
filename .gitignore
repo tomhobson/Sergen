@@ -4,8 +4,7 @@ project.lock.json
 .DS_Store
 *.pyc
 
-# Visual Studio Code
-.vscode
+# Visual Studio Code Removed because configs should be transferrable
 
 # User-specific files
 *.suo
