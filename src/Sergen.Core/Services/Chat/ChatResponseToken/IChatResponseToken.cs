@@ -7,5 +7,7 @@ namespace  Sergen.Core.Services.Chat.ChatResponseToken
         Task<string> Respond (string response);
 
         Task Update(string messageID, string update);
+
+        Task UpdateLastInteractedWithMessage(string update);
     }
 }

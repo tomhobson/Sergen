@@ -3,7 +3,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Sergen.Core.Services.Chat.ChatResponseToken;
+using Sergen.Core.Services.Chat.StaticHelpers;
 using Sergen.Core.Services.Containers;
+using Sergen.Core.Services.IpGetter;
 using Sergen.Core.Services.ServerStore;
 using Sergen.Master.Services.Chat.ChatContext;
 
@@ -13,17 +15,19 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
     {
         private readonly IChatContext _context;
         private readonly IContainerInterface _containerInterface;
-
         private readonly IServerStore _serverStore;
+        private readonly IIPGetter _ipGetter;
 
         public ChatProcessor (
             IChatContext context,
             IContainerInterface containerInt,
-            IServerStore serverStore)
+            IServerStore serverStore,
+            IIPGetter ipGetter)
         {
             _context = context;
             _containerInterface = containerInt;
             _serverStore = serverStore;
+            _ipGetter = ipGetter;
         }
 
         public async Task ProcessMessage (IChatResponseToken icrt, ulong senderID, string input)
@@ -33,6 +37,9 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
             {
                 case "-ping":
                     icrt.Respond("pong!");
+                    break;
+                case "-ip":
+                    icrt.Respond($"My IP Address is: {await _ipGetter.GetIP()}");
                     break;
                 case "-whoami":
                     icrt.Respond($"You are: {_context.GetUsername(senderID)}");
@@ -44,13 +51,13 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
                     icrt.Respond($"My version is: {version}");
                     break;
                 case "-running":
-                    var allcontainers = ListToStringList (await _containerInterface.GetRunningContainers ());
+                    var allcontainers = ListToStringList.Convert(await _containerInterface.GetRunningContainers ());
                     icrt.Respond($"Running containers are: {allcontainers}");
                     break;
                 case "-possible":
                     var servers = _serverStore.GetAllServers (GetContainerInterfaceType ());
                     var serverNames = servers.Select (s => s.ServerName).ToList ();
-                    var serverStringList = ListToStringList (serverNames);
+                    var serverStringList = ListToStringList.Convert(serverNames);
                     icrt.Respond($"Possible game servers are: {serverStringList}");
                     break;
             }
@@ -62,18 +69,8 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
                 var gameServer = _serverStore.GetGameServerByName (serverName, GetContainerInterfaceType ());
                 var contId = await _containerInterface.Setup(icrt,gameServer);
 
-                _containerInterface.Run(contId);
+                await _containerInterface.Run(icrt, contId);
             }
-        }
-
-        public string ListToStringList (IList<string> inputList)
-        {
-            string allText = "";
-            foreach (var stri in inputList)
-            {
-                allText = allText + $"\n {stri}";
-            }
-            return allText;
         }
 
         public string GetContainerInterfaceType ()

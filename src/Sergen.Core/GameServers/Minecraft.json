@@ -1,7 +1,7 @@
 {
     "serverName": "Minecraft",
     "containerName": "itzg/minecraft-server",
-    "containerType": "Sergen.Services.Containers.DockerInterface",
+    "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
     "ports": [
         25565
     ],

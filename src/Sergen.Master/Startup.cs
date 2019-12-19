@@ -1,4 +1,7 @@
-﻿using Discord;
+﻿using System;
+using System.Net;
+using System.Net.Http;
+using Discord;
 using Discord.WebSocket;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Sergen.Core.Services.Containers;
 using Sergen.Core.Services.Containers.Docker;
+using Sergen.Core.Services.IpGetter;
 using Sergen.Core.Services.ServerStore;
 using Sergen.Master.Services;
 using Sergen.Master.Services.Chat.ChatContext;
@@ -34,6 +38,9 @@ namespace Sergen.Master
             services.AddTransient<IChatContext, DiscordContext>();
             services.AddTransient<IContainerInterface, DockerInterface>();
             services.AddTransient<IServerStore, JsonServerStore>();
+            services.AddTransient<IIPGetter, ipecho>();
+
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

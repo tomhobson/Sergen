@@ -1,8 +1,9 @@
-using System.Linq;
+using System.Reflection;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Sergen.Core.Data;
 using Newtonsoft.Json;
+using Sergen.Core.Data;
 
 namespace Sergen.Core.Services.ServerStore
 {
@@ -10,37 +11,39 @@ namespace Sergen.Core.Services.ServerStore
     {
         private string _path = "";
 
-        public JsonServerStore(){
-            _path = Path.Combine("GameServers");
+        public JsonServerStore ()
+        {
+            var executingLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            _path = Path.Combine (executingLocation, "GameServers");
         }
 
-        public IList<GameServer> GetAllServers(string containerType)
+        public IList<GameServer> GetAllServers (string containerType)
         {
-            List<GameServer> servers = new List<GameServer>();
+            List<GameServer> servers = new List<GameServer> ();
 
-            var files = Directory.GetFiles(_path);
+            var files = Directory.GetFiles (_path);
 
-            foreach(var file in files)
+            foreach (var file in files)
             {
-                var text = File.ReadAllText(file);
-                var gameServer = JsonConvert.DeserializeObject<GameServer>(text);
-                if(gameServer.ContainerType == containerType)
+                var text = File.ReadAllText (file);
+                var gameServer = JsonConvert.DeserializeObject<GameServer> (text);
+                if (gameServer.ContainerType == containerType)
                 {
-                    servers.Add(gameServer);
+                    servers.Add (gameServer);
                 }
             }
             return servers;
         }
 
-        public GameServer GetGameServerByName(string serverName, string containerType)
+        public GameServer GetGameServerByName (string serverName, string containerType)
         {
-            var files = Directory.GetFiles(_path);
+            var files = Directory.GetFiles (_path);
 
-            foreach(var file in files)
+            foreach (var file in files)
             {
-                var text = File.ReadAllText(file);
-                var gameServer = JsonConvert.DeserializeObject<GameServer>(text);
-                if(gameServer.ContainerType == containerType && gameServer.ServerName == serverName)
+                var text = File.ReadAllText (file);
+                var gameServer = JsonConvert.DeserializeObject<GameServer> (text);
+                if (gameServer.ContainerType == containerType && gameServer.ServerName == serverName)
                 {
                     return gameServer;
                 }

@@ -11,7 +11,7 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/Sergen.Master/bin/Debug/netcoreapp3.1/Sergen.Master.dll",
             "args": [],
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/src/Sergen.Master",
             "console": "internalConsole",
             "stopAtEntry": false
         },

@@ -12,6 +12,6 @@ namespace Sergen.Core.Services.Containers
 
         Task<string> Setup(IChatResponseToken icrt, GameServer gameServer);
 
-        Task<string> Run(string id);
+        Task Run(IChatResponseToken icrt, string id);
     }
 }

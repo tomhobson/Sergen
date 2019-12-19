@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System;
 using System.Threading.Tasks;
 using Discord.Rest;
@@ -9,6 +10,8 @@ namespace  Sergen.Core.Services.Chat.ChatResponseToken
     {
         ISocketMessageChannel _responseChannel;
 
+        RestUserMessage _lastMessagedInteractedWith;
+
         public DiscordResponseToken (ISocketMessageChannel channel)
         {
             _responseChannel = channel;
@@ -17,6 +20,7 @@ namespace  Sergen.Core.Services.Chat.ChatResponseToken
         public async Task<string> Respond(string response)
         {
             var mes = await _responseChannel.SendMessageAsync(response);
+            _lastMessagedInteractedWith = mes;
             return mes.Id.ToString();
         }
 
@@ -26,6 +30,15 @@ namespace  Sergen.Core.Services.Chat.ChatResponseToken
             if(message is RestUserMessage rumess)
             {
                 await rumess.ModifyAsync(msg => msg.Content = update);
+                _lastMessagedInteractedWith = rumess;
+            }
+        }
+
+        public async Task UpdateLastInteractedWithMessage(string update)
+        {
+            if(_lastMessagedInteractedWith != null)
+            {
+                _lastMessagedInteractedWith.ModifyAsync(msg => msg.Content = update);
             }
         }
     }

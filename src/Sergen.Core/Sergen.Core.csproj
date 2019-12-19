@@ -19,4 +19,9 @@
   <ItemGroup>
     <None Remove="Dockerfile"/>
   </ItemGroup>
+    <ItemGroup>
+    <Content Include="GameServers\*.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>  
+  </ItemGroup>
 </Project>

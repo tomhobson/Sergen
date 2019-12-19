@@ -7,6 +7,8 @@ using Sergen.Core.Data;
 using Sergen.Core.Services.Chat.ChatResponseToken;
 using Docker.DotNet;
 using Docker.DotNet.Models;
+using Sergen.Core.Services.IpGetter;
+using Sergen.Core.Services.Chat.StaticHelpers;
 
 namespace Sergen.Core.Services.Containers.Docker 
 {
@@ -16,8 +18,11 @@ namespace Sergen.Core.Services.Containers.Docker
 
         private DockerClient _client;
 
-        public DockerInterface () 
+        private readonly IIPGetter _ipGetter;
+
+        public DockerInterface (IIPGetter ipGetter) 
         {
+            _ipGetter = ipGetter;
             var os = Environment.OSVersion;
 
             if (os.Platform == PlatformID.Unix) {
@@ -58,7 +63,7 @@ namespace Sergen.Core.Services.Containers.Docker
             return dcsu.ID;
         }
 
-        public async Task<string> Run (string id) 
+        public async Task Run (IChatResponseToken icrt, string id) 
         {
             _containerStore.TryGetValue(id, out DockerContainer gameServerContainer);
 
@@ -75,9 +80,12 @@ namespace Sergen.Core.Services.Containers.Docker
 
             var env = new List<string>();
 
-            foreach(var variable in gameServer.EnvironmentalVariables)
+            if(gameServer.EnvironmentalVariables != null)
             {
-                env.Add($"{variable.Key}={variable.Value}");
+                foreach(var variable in gameServer.EnvironmentalVariables)
+                {
+                    env.Add($"{variable.Key}={variable.Value}");
+                }
             }
 
             var response = await _client.Containers.CreateContainerAsync (new CreateContainerParameters 
@@ -93,7 +101,8 @@ namespace Sergen.Core.Services.Containers.Docker
 
             await _client.Containers.StartContainerAsync(response.ID, null);
 
-            return "";
+            await icrt.UpdateLastInteractedWithMessage($"{gameServer.ServerName} available at: "
+            + $"{await _ipGetter.GetIP()} With Ports: {ListToStringList.Convert(gameServer.Ports)}");
         }
     }
 }
