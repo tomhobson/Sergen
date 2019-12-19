@@ -1,6 +1,6 @@
 {
   "serverName": "Terraria",
-  "containerName": "topdockercat/terraria-server-vanilla",
+  "containerName": "ryshe/terraria",
   "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
   "ports": [
     7777
