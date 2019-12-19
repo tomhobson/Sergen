@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Sergen.Core</RootNamespace>
+    <UserSecretsId>f96cb332-a3f0-45b5-83ec-3ec039b36f12</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.5"/>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3"/>
+    <PackageReference Include="Discord.Net" Version="2.1.1"/>
+    <PackageReference Include="Docker.DotNet" Version="3.125.2"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\"/>
+    <Folder Include="Services\Chat\"/>
+    <Folder Include="Services\Chat\ChatResponseToken\"/>
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Dockerfile"/>
+  </ItemGroup>
+</Project>
