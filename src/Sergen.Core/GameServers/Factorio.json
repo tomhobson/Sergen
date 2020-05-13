@@ -1,0 +1,13 @@
+{
+  "serverName": "Factorio",
+  "containerName": "dtandersen/factorio",
+  "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
+  "ports": [
+    34197,
+    27015
+  ],
+  "environmentalVariables": {
+    "INSTANCE_NAME": "Factorio",
+    "INSTANCE_DESC": "Factorio Server Hosted By Sergen"
+  }
+}

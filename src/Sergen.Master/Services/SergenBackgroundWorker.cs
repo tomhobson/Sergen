@@ -23,7 +23,6 @@ namespace Sergen.Master.Services
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-        
         }
     }
 }
