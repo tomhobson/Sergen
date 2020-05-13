@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Sergen.Core.Data;
 using Sergen.Core.Services.Chat.ChatResponseToken;
@@ -63,7 +65,15 @@ namespace Sergen.Core.Services.Containers.Docker
             return dcsu.ID;
         }
 
-        public async Task Run (IChatResponseToken icrt, string id) 
+        private void CreateDirectoriesIfNotExist(string path)
+        {
+            if(Directory.Exists(path) == false)
+            {
+                Directory.CreateDirectory(path);
+            }
+        }
+
+        public async Task Run (string serverId, IChatResponseToken icrt, string id) 
         {
             _containerStore.TryGetValue(id, out DockerContainer gameServerContainer);
 
@@ -71,6 +81,7 @@ namespace Sergen.Core.Services.Containers.Docker
 
             var portsToExpose = new Dictionary<string, EmptyStruct>();
             var portBindings = new Dictionary<string, IList<PortBinding>>();
+            var mounts = new List<Mount>();
 
             foreach(var port in gameServer.Ports)
             {
@@ -87,6 +98,35 @@ namespace Sergen.Core.Services.Containers.Docker
                     env.Add($"{variable.Key}={variable.Value}");
                 }
             }
+            
+            //Create basic server dirs if they don't exist already
+            var basePath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            var serverFiles = Path.Combine(basePath, "server-files");
+            var serverPath = Path.Combine(serverFiles, serverId);
+            var gameFilesPath = Path.Combine(serverPath, gameServer.ServerName);
+            CreateDirectoriesIfNotExist(serverFiles);
+            CreateDirectoriesIfNotExist(serverPath);
+            CreateDirectoriesIfNotExist(gameFilesPath);
+
+            foreach (var bindData in gameServer.Binds)
+            {
+                string actualBind = bindData;
+                if (bindData.StartsWith("/"))
+                {
+                    actualBind = bindData.Remove(0, 1);
+                }
+
+
+                actualBind = Path.Combine(gameFilesPath, actualBind);
+                CreateDirectoriesIfNotExist(actualBind);
+                
+                mounts.Add(new Mount()
+                {
+                    Target = bindData,
+                    Source = actualBind,
+                    Type = "bind"
+                });
+            }
 
             var response = await _client.Containers.CreateContainerAsync (new CreateContainerParameters 
             {
@@ -94,7 +134,8 @@ namespace Sergen.Core.Services.Containers.Docker
                 ExposedPorts = portsToExpose,
                 HostConfig = new HostConfig {
                     PortBindings = portBindings,
-                    PublishAllPorts = true
+                    PublishAllPorts = true,
+                    Mounts = mounts
                 },
                 Env = env
             });

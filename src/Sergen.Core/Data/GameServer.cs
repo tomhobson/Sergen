@@ -13,5 +13,7 @@ namespace Sergen.Core.Data
         public IList<string> Ports { get; set; }
 
         public Dictionary<string, string> EnvironmentalVariables { get; set; }
+        
+        public IList<string> Binds { get; set; }
     }
 }

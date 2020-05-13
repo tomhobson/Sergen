@@ -30,7 +30,7 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
             _ipGetter = ipGetter;
         }
 
-        public async Task ProcessMessage (IChatResponseToken icrt, ulong senderID, string input)
+        public async Task ProcessMessage (string serverID, IChatResponseToken icrt, ulong senderID, string input)
         {
             // Switch statement for all commands that are constant
             switch (input)
@@ -67,9 +67,9 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
                 // Time to do some work
                 var serverName = input.Replace ("-run ", "");
                 var gameServer = _serverStore.GetGameServerByName (serverName, GetContainerInterfaceType ());
-                var contId = await _containerInterface.Setup(icrt,gameServer);
+                var contId = await _containerInterface.Setup(icrt, gameServer);
 
-                await _containerInterface.Run(icrt, contId);
+                await _containerInterface.Run(serverID, icrt, contId);
             }
         }
 

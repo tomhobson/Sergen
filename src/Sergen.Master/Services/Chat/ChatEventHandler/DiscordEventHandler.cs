@@ -64,7 +64,7 @@ namespace  Sergen.Master.Services.Chat.ChatEventHandler
 
                         if (sgc is IMessageChannel imc)
                         {
-                            await imc.SendMessageAsync ($"Are you lot really playing {postUser.Activity.Name}");
+                            await imc.SendMessageAsync ($"Multiple people playing: {postUser.Activity.Name}");
                         }
                     }
                 }
@@ -79,7 +79,9 @@ namespace  Sergen.Master.Services.Chat.ChatEventHandler
 
             IChatResponseToken crt = new DiscordResponseToken(message.Channel);
 
-            await _chatProcessor.ProcessMessage (crt, message.Author.Id, message.Content);
+            var channel = message.Channel as SocketGuildChannel;
+            
+            await _chatProcessor.ProcessMessage (channel.Guild.Id.ToString(), crt, message.Author.Id, message.Content);
         }
     }
 }

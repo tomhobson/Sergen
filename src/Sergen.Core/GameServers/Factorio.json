@@ -9,5 +9,8 @@
   "environmentalVariables": {
     "INSTANCE_NAME": "Factorio",
     "INSTANCE_DESC": "Factorio Server Hosted By Sergen"
-  }
+  },
+  "binds": [
+    "/opt/factorio"
+  ]
 }
