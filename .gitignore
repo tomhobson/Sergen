@@ -29,3 +29,6 @@ msbuild.wrn
 
 # Visual Studio 2015
 .vs/
+
+#Sergen specific
+server-files/

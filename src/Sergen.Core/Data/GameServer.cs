@@ -9,6 +9,8 @@ namespace Sergen.Core.Data
         public string ContainerName { get; set; }
 
         public string ContainerType { get; set; }
+        
+        public string ContainerTag { get; set; }
 
         public IList<string> Ports { get; set; }
 

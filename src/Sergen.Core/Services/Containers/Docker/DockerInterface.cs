@@ -51,11 +51,16 @@ namespace Sergen.Core.Services.Containers.Docker
             DockerContainer  dcsu = new DockerContainer(icrt, gameServer);
             
             progression.ProgressChanged += dcsu.HandleUpdate;
-
+            
+            if (gameServer.ContainerTag == null)
+            {
+                gameServer.ContainerTag = "latest";
+            }
+            
             await _client.Images.CreateImageAsync (new ImagesCreateParameters 
                 {
                     FromImage = gameServer.ContainerName,
-                        Tag = "latest"
+                        Tag = gameServer.ContainerTag
                 },
                 new AuthConfig (),
                 progression);
@@ -86,7 +91,7 @@ namespace Sergen.Core.Services.Containers.Docker
             foreach(var port in gameServer.Ports)
             {
                 portsToExpose.Add(port, default(EmptyStruct));
-                portBindings.Add(port, new List<PortBinding>{ new PortBinding { HostPort = port}});
+                portBindings.Add(port, new List<PortBinding>{ new PortBinding { HostPort = port} });
             }
 
             var env = new List<string>();
