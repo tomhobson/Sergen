@@ -90,8 +90,14 @@ namespace Sergen.Core.Services.Containers.Docker
 
             foreach(var port in gameServer.Ports)
             {
-                portsToExpose.Add(port, default(EmptyStruct));
-                portBindings.Add(port, new List<PortBinding>{ new PortBinding { HostPort = port} });
+                var portAssignment = port.Key;
+                if (port.Value == "udp")
+                {
+                    portAssignment = $"{port.Key}/{port.Value}";
+                }
+                
+                portsToExpose.Add(portAssignment, default(EmptyStruct));
+                portBindings.Add(portAssignment, new List<PortBinding>{ new PortBinding { HostPort = portAssignment} });
             }
 
             var env = new List<string>();
@@ -135,7 +141,7 @@ namespace Sergen.Core.Services.Containers.Docker
 
             var response = await _client.Containers.CreateContainerAsync (new CreateContainerParameters 
             {
-                Image = gameServer.ContainerName,
+                Image = $"{gameServer.ContainerName}:{gameServer.ContainerTag}",
                 ExposedPorts = portsToExpose,
                 HostConfig = new HostConfig {
                     PortBindings = portBindings,
@@ -148,7 +154,7 @@ namespace Sergen.Core.Services.Containers.Docker
             await _client.Containers.StartContainerAsync(response.ID, null);
 
             await icrt.UpdateLastInteractedWithMessage($"{gameServer.ServerName} available at: "
-            + $"{await _ipGetter.GetIP()} With Ports: {ListToStringList.Convert(gameServer.Ports)}");
+            + $"{await _ipGetter.GetIP()} With Ports: {ObjectToString.Convert(gameServer.Ports)}");
         }
     }
 }

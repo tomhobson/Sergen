@@ -2,8 +2,8 @@
   "serverName": "Terraria",
   "containerName": "ryshe/terraria",
   "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
-  "ports": [
-    7777
-  ],
+  "ports": {
+  "7777": "tcp"
+  },
   "environmentalVariables": null
 }

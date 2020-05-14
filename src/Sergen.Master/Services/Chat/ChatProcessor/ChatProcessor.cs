@@ -51,13 +51,13 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
                     icrt.Respond($"My version is: {version}");
                     break;
                 case "-running":
-                    var allcontainers = ListToStringList.Convert(await _containerInterface.GetRunningContainers ());
+                    var allcontainers = ObjectToString.Convert(await _containerInterface.GetRunningContainers ());
                     icrt.Respond($"Running containers are: {allcontainers}");
                     break;
                 case "-possible":
                     var servers = _serverStore.GetAllServers (GetContainerInterfaceType ());
                     var serverNames = servers.Select (s => s.ServerName).ToList ();
-                    var serverStringList = ListToStringList.Convert(serverNames);
+                    var serverStringList = ObjectToString.Convert(serverNames);
                     icrt.Respond($"Possible game servers are: {serverStringList}");
                     break;
             }

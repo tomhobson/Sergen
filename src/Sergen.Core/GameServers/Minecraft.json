@@ -2,9 +2,9 @@
     "serverName": "Minecraft",
     "containerName": "itzg/minecraft-server",
     "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
-    "ports": [
-        25565
-    ],
+    "ports": {
+    "25565": "tcp"
+    },
     "environmentalVariables": {
         "EULA": "True"
     },

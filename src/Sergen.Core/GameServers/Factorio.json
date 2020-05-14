@@ -3,10 +3,10 @@
   "containerName": "factoriotools/factorio",
   "containerTag": "stable",
   "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
-  "ports": [
-    34197,
-    27015
-  ],
+  "ports": {
+  "34197": "udp",
+  "27015": "tcp"
+  },
   "environmentalVariables": {
     "INSTANCE_NAME": "Factorio",
     "INSTANCE_DESC": "Factorio Server Hosted By Sergen"

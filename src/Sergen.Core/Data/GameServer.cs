@@ -12,7 +12,7 @@ namespace Sergen.Core.Data
         
         public string ContainerTag { get; set; }
 
-        public IList<string> Ports { get; set; }
+        public Dictionary<string, string> Ports { get; set; }
 
         public Dictionary<string, string> EnvironmentalVariables { get; set; }
         
