@@ -1,6 +1,6 @@
 {
   "serverName": "Factorio",
-  "containerName": "factoriotools/factorio",
+  "containerName": "factoriotools/factorio:stable",
   "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
   "ports": [
     34197,
