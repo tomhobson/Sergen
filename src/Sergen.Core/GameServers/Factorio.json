@@ -11,6 +11,6 @@
     "INSTANCE_DESC": "Factorio Server Hosted By Sergen"
   },
   "binds": [
-    "/opt/factorio"
+    "/factorio"
   ]
 }
