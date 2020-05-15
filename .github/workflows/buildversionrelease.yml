@@ -26,7 +26,7 @@ jobs:
             - name: List files
               run: find . | sed -e "s/[^-][^\/]*\// |/g" -e "s/|\([^ ]\)/|-\1/"
             - name: Zip release
-              run: zip -r -j release.zip src/Sergen.Master/bin/Release/netcoreapp3.1/*
+              run: cd src/Sergen.Master/bin/Release/netcoreapp3.1/* ; zip -r ../../../../../zipped.zip . * ; cd ../../../../..
             - name: Create Release
               id: create_release
               uses: actions/create-release@v1
