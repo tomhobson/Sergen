@@ -25,12 +25,6 @@ jobs:
               run: dotnet build --configuration Release --no-restore
             - name: Zip release
               run: zip release.zip src/Sergen.Master/bin/Release/*
-            - name: Bump version
-              uses: tomhobson/bump-version@js
-              with:
-                version_file: ./src/Sergen.Master/Sergen.Master.csproj
-                github_token: ${{ secrets.GITHUB_TOKEN }}
-                branch: master
             - name: Create Release
               id: create_release
               uses: actions/create-release@v1
