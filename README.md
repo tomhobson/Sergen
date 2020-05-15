@@ -1,9 +1,9 @@
 ![.NET Build And Release](https://github.com/tomhobson/Sergen/workflows/.NET%20Build%20And%20Release/badge.svg)
 
 # Sergen
-Server generation through discord chat.
+Game server generation with curated images orchestrated by discord chat.
 
-![Screenshot of Sergen working](https://github.com/tomhobson/Sergen/blob/master/screenshots/screenshot.png) <!-- .element height="50%" width="50%" -->
+<img src="https://github.com/tomhobson/Sergen/blob/master/screenshots/screenshot.png" alt="Screenshot of Sergen working" width="45%">
 
 Requires:
 * Docker
