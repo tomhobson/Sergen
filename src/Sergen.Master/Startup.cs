@@ -39,7 +39,7 @@ namespace Sergen.Master
             services.AddTransient<IChatContext, DiscordContext>();
             services.AddTransient<IContainerInterface, DockerInterface>();
             services.AddTransient<IServerStore, JsonServerStore>();
-            services.AddTransient<IIPGetter, ipecho>();
+            services.AddTransient<IIpGetter, ipecho>();
 
             services.AddMvc();
         }

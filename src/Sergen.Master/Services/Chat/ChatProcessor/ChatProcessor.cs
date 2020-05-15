@@ -16,13 +16,13 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
         private readonly IChatContext _context;
         private readonly IContainerInterface _containerInterface;
         private readonly IServerStore _serverStore;
-        private readonly IIPGetter _ipGetter;
+        private readonly IIpGetter _ipGetter;
 
         public ChatProcessor (
             IChatContext context,
             IContainerInterface containerInt,
             IServerStore serverStore,
-            IIPGetter ipGetter)
+            IIpGetter ipGetter)
         {
             _context = context;
             _containerInterface = containerInt;
@@ -32,14 +32,17 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
 
         public async Task ProcessMessage (string serverID, IChatResponseToken icrt, ulong senderID, string input)
         {
+            // Make the initial command case insensitive
+            var firstCommand = input.Split(" ")[0].ToLower();
+            
             // Switch statement for all commands that are constant
-            switch (input)
+            switch (firstCommand)
             {
                 case "-ping":
                     icrt.Respond("pong!");
                     break;
                 case "-ip":
-                    icrt.Respond($"My IP Address is: {await _ipGetter.GetIP()}");
+                    icrt.Respond($"My IP Address is: {await _ipGetter.GetIp()}");
                     break;
                 case "-whoami":
                     icrt.Respond($"You are: {_context.GetUsername(senderID)}");
@@ -51,7 +54,7 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
                     icrt.Respond($"My version is: {version}");
                     break;
                 case "-running":
-                    var allcontainers = ObjectToString.Convert(await _containerInterface.GetRunningContainers ());
+                    var allcontainers = ObjectToString.Convert(await _containerInterface.GetRunningContainers (serverID));
                     icrt.Respond($"Running containers are: {allcontainers}");
                     break;
                 case "-possible":
@@ -70,6 +73,21 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
                 var contId = await _containerInterface.Setup(icrt, gameServer);
 
                 await _containerInterface.Run(serverID, icrt, contId);
+            }
+            
+            if (input.StartsWith ("-stop "))
+            {
+                // Time to do some work
+                var serverName = input.Replace ("-stop ", "");
+                var gameServer = _serverStore.GetGameServerByName (serverName, GetContainerInterfaceType ());
+
+                if (gameServer == null)
+                {
+                    
+                }
+                
+                
+                await _containerInterface.Stop(serverID, icrt, gameServer);
             }
         }
 

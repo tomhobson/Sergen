@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
+using Discord;
 using Sergen.Core.Data;
 using Sergen.Core.Services.Chat.ChatResponseToken;
 using Docker.DotNet;
@@ -20,9 +22,11 @@ namespace Sergen.Core.Services.Containers.Docker
 
         private DockerClient _client;
 
-        private readonly IIPGetter _ipGetter;
+        private readonly IIpGetter _ipGetter;
 
-        public DockerInterface (IIPGetter ipGetter) 
+        private const int WAIT_FOR_DOCKER_MILLISECONDS = 2500;
+
+        public DockerInterface (IIpGetter ipGetter) 
         {
             _ipGetter = ipGetter;
             var os = Environment.OSVersion;
@@ -38,9 +42,10 @@ namespace Sergen.Core.Services.Containers.Docker
             }
         }
 
-        public async Task<IList<string>> GetRunningContainers () 
+        public async Task<IList<string>> GetRunningContainers (string serverId) 
         {
-            var containers = await _client.Containers.ListContainersAsync (new ContainersListParameters () { Limit = 10 });
+            //Get all containers that start with the server id
+            var containers = await GetAllContainersRanByServer(serverId);
             return containers.Select (cnt => $"Image: {cnt.Image} Status: {cnt.Status}").ToList ();
         }
 
@@ -142,6 +147,7 @@ namespace Sergen.Core.Services.Containers.Docker
             var response = await _client.Containers.CreateContainerAsync (new CreateContainerParameters 
             {
                 Image = $"{gameServer.ContainerName}:{gameServer.ContainerTag}",
+                Name = $"{serverId}-{gameServer.ServerName}",
                 ExposedPorts = portsToExpose,
                 HostConfig = new HostConfig {
                     PortBindings = portBindings,
@@ -154,7 +160,86 @@ namespace Sergen.Core.Services.Containers.Docker
             await _client.Containers.StartContainerAsync(response.ID, null);
 
             await icrt.UpdateLastInteractedWithMessage($"{gameServer.ServerName} available at: "
-            + $"{await _ipGetter.GetIP()} With Ports: {ObjectToString.Convert(gameServer.Ports)}");
+            + $"{await _ipGetter.GetIp()} With Ports: {ObjectToString.Convert(gameServer.Ports)}");
+        }
+
+        public async Task Stop(string serverId, IChatResponseToken icrt, GameServer gameServer)
+        {
+            var allContainers = await GetAllContainersRanByServer(serverId);
+
+            var gameContainers = allContainers.Where(x => x.Image.Contains(gameServer.ContainerName)).ToList();
+
+            if (gameContainers.Any() == false)
+            {
+                await icrt.Respond("No servers to stop found.");
+                return;
+            }
+            
+            if (gameContainers.Count() == 1)
+            {
+                StopAndRemove(gameContainers[0].ID);
+                
+                icrt.Respond($"Game server {gameServer.ServerName} removed.");
+            }
+            
+            if (gameContainers.Count() > 1)
+            {
+                string runningContainerIds = "";
+
+                foreach (var cont in gameContainers)
+                {
+                    runningContainerIds += $"{cont.ID} {cont.Image} {cont.Created} \n";
+                }
+
+                icrt.Respond($"Which container would you like me to stop? `-stop *containerid*`");
+            }
+        }
+
+        public async Task StopById(string serverId, IChatResponseToken icrt, string containerId)
+        {
+            StopAndRemove(containerId);
+
+            icrt.Respond($"Game server {containerId} removed.");
+        }
+
+        private async Task StopAndRemove(string containerId)
+        {
+            await _client.Containers.StopContainerAsync(containerId, new ContainerStopParameters()
+            {
+                WaitBeforeKillSeconds = 10
+            });
+            
+            //Sleep so the daemon can stop the pod
+            Thread.Sleep(WAIT_FOR_DOCKER_MILLISECONDS);
+            
+            await _client.Containers.RemoveContainerAsync(containerId, new ContainerRemoveParameters()
+            {
+                Force = false
+            });
+        }
+
+        private async Task<IEnumerable<ContainerListResponse>> GetAllContainersRanByServer(string serverId)
+        {
+            var allContainers =
+                await _client.Containers.ListContainersAsync(new ContainersListParameters() {Limit = 40});
+
+            var serverContainers = new List<ContainerListResponse>();
+
+            foreach (var container in allContainers)
+            {
+                bool isServersContainer = false;
+                foreach (var name in container.Names)
+                {
+                    if (name.Contains(serverId))
+                        isServersContainer = true;
+                }
+
+                if (isServersContainer)
+                    serverContainers.Add(container);
+            }
+
+            //var serverContainers = allContainers.Where(x => x.Names.Any(y => y.Contains(serverId)));
+            return serverContainers;
         }
     }
 }

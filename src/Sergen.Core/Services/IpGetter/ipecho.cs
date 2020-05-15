@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Sergen.Core.Services.IpGetter
 {
-    public class ipecho : IIPGetter
+    public class ipecho : IIpGetter
     {
         private readonly HttpClient _httpClient;
 
@@ -16,7 +16,7 @@ namespace Sergen.Core.Services.IpGetter
             };
         }
 
-        public async Task<string> GetIP()
+        public async Task<string> GetIp()
         {
             try
             {

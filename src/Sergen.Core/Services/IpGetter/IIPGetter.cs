@@ -2,8 +2,8 @@ using System.Threading.Tasks;
 
 namespace Sergen.Core.Services.IpGetter
 {
-    public interface IIPGetter
+    public interface IIpGetter
     {
-        Task<string> GetIP();
+        Task<string> GetIp();
     }
 }
