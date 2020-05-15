@@ -17,12 +17,13 @@ jobs:
             - name: Build
               run: dotnet build --configuration Release --no-restore
             - name: Zip release
-              run: cat
-            - name: Bump versions
-              uses: SiqiLu/dotnet-bump-version@master
+              run: find . -type d -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
+            - name: Bump version
+              uses: remorses/bump-version@js
               with:
-                  version_files: "**/*.csproj"
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                version_file: ./VERSION
+                github_token: ${{ secrets.GITHUB_TOKEN }}
+                branch: master
             - name: Create Release
               id: create_release
               uses: actions/create-release@v1
