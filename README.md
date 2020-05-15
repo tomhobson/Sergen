@@ -4,6 +4,6 @@ Server generation through discord.
 
 
 Requires:
-*Docker
-*Dotnet 3.1 runtime
-*completely open firewall (or at least all the ports you want to use open)
+* Docker
+* Dotnet 3.1 runtime
+* completely open firewall (or at least all the ports you want to use open)
