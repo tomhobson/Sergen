@@ -1,14 +1,14 @@
 [Unit]
-Description=Easy Server Generation
+Description=Sergen Daemon
 
 [Service]
-ExecStart=/root/Sergen/src/Sergen.Master/bin/Release/netcoreapp3.1/Sergen.Master
+ExecStart=/opt/Sergen/Sergen.Master
 Restart=always
 User=root
 # Note Debian/Ubuntu uses 'nogroup', RHEL/Fedora uses 'nobody'
 Group=nogroup
 Environment=PATH=/usr/bin:/usr/local/bin
-WorkingDirectory=/root/Sergen/src/Sergen.Master/bin/Release/netcoreapp3.1
+WorkingDirectory=/opt/Sergen
 
 [Install]
 WantedBy=multi-user.target
