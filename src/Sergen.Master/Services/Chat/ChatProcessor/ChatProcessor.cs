@@ -70,6 +70,12 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
                 // Time to do some work
                 var serverName = input.Replace ("-run ", "");
                 var gameServer = _serverStore.GetGameServerByName (serverName, GetContainerInterfaceType ());
+
+                if (gameServer == null)
+                {
+                    icrt.Respond("Image could not be found. Find all possible game servers with -possible");
+                    return;
+                }
                 var contId = await _containerInterface.Setup(icrt, gameServer);
 
                 await _containerInterface.Run(serverID, icrt, contId);
