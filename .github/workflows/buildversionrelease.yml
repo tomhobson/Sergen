@@ -23,8 +23,10 @@ jobs:
               run: dotnet restore
             - name: Build
               run: dotnet build --configuration Release --no-restore
+            - name: List files
+              run: find . -type d -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
             - name: Zip release
-              run: zip release.zip src/Sergen.Master/bin/Release/*
+              run: zip release.zip src/Sergen.Master/bin/Release/netcoreapp3.1/*
             - name: Create Release
               id: create_release
               uses: actions/create-release@v1
