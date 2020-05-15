@@ -23,8 +23,5 @@
     <Content Include="GameServers\*.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="GameServers\Factorio.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>  
   </ItemGroup>
 </Project>
