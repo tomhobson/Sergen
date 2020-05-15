@@ -3,7 +3,7 @@
 # Sergen
 Server generation through discord chat.
 
-Screenshot 2020-05-15 at 23.09.36
+
 
 Requires:
 * Docker
