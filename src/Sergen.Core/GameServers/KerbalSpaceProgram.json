@@ -1,0 +1,15 @@
+{
+  "serverName": "Kerbal Space Program",
+  "containerName": "gameservers/kerbal-space-program",
+  "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
+  "ports": {
+  "6702": "tcp"
+  },
+  "environmentalVariables": {
+    "KSP_SERVER_NAME": "KSP Hosted by Sergen",
+    "KSP_SERVER_GAMEMODE": "3"
+  },
+  "binds": [
+    "/data/ksp/DMPServer/Universe"
+  ]
+}
