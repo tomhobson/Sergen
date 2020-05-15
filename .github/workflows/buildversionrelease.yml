@@ -28,9 +28,9 @@ jobs:
             - name: Bump version
               uses: remorses/bump-version@js
               with:
-                version_file: ./src/Sergen.Master/Sergen.Master.csproj
-                github_token: ${{ secrets.GITHUB_TOKEN }}
-                branch: master
+                VERSION_FILE: ./src/Sergen.Master/Sergen.Master.csproj
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                BRANCH: master
             - name: Create Release
               id: create_release
               uses: actions/create-release@v1
