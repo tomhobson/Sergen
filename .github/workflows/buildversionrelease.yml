@@ -28,7 +28,7 @@ jobs:
             - name: Bump version
               uses: remorses/bump-version@js
               with:
-                version_file: ./VERSION
+                version_file: src/Sergen.Master/Sergen.Master.csproj
                 github_token: ${{ secrets.GITHUB_TOKEN }}
                 branch: master
             - name: Create Release
@@ -38,7 +38,7 @@ jobs:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                 tag_name: latest
-                release_name: Release ${{ github.ref }}
+                release_name: CI Build
                 draft: false
                 prerelease: false
             - name: Upload Release Asset
