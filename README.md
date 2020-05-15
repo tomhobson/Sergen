@@ -3,7 +3,7 @@
 # Sergen
 Server generation through discord chat.
 
-
+![Screenshot of Sergen working]("https://github.com/tomhobson/Sergen/blob/master/screenshots/screenshot.png")
 
 Requires:
 * Docker
