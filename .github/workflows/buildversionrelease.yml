@@ -24,7 +24,7 @@ jobs:
             - name: Build
               run: dotnet build --configuration Release --no-restore
             - name: List files
-              run: find . -type d -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
+              run: find . | sed -e "s/[^-][^\/]*\// |/g" -e "s/|\([^ ]\)/|-\1/"
             - name: Zip release
               run: zip release.zip src/Sergen.Master/bin/Release/netcoreapp3.1/*
             - name: Create Release
