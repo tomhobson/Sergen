@@ -79,7 +79,7 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
             if (input.StartsWith ("-run "))
             {
                 // Time to do some work
-                var serverName = input.Replace ("-run ", "");
+                var serverName = ChatHelper.PreParseInputString(input.Replace ("-run ", ""));
                 var gameServer = _serverStore.GetGameServerByName (serverName, GetContainerInterfaceType ());
 
                 if (gameServer == null)
@@ -95,7 +95,7 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
             if (input.StartsWith ("-stop "))
             {
                 // Time to do some work
-                var serverName = input.Replace ("-stop ", "");
+                var serverName = ChatHelper.PreParseInputString(input.Replace ("-stop ", ""));
                 var gameServer = _serverStore.GetGameServerByName (serverName, GetContainerInterfaceType ());
 
                 if (gameServer == null)

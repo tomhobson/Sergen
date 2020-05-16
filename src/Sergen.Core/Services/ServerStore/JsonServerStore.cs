@@ -2,8 +2,10 @@ using System.Reflection;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
 using Sergen.Core.Data;
+using Sergen.Core.Services.Chat.StaticHelpers;
 
 namespace Sergen.Core.Services.ServerStore
 {
@@ -35,6 +37,22 @@ namespace Sergen.Core.Services.ServerStore
             return servers;
         }
 
+        public GameServer GetGameServerByName (string serverName)
+        {
+            var files = Directory.GetFiles (_path);
+
+            foreach (var file in files)
+            {
+                var text = File.ReadAllText (file);
+                var gameServer = JsonConvert.DeserializeObject<GameServer> (text);
+                if (ChatHelper.PreParseInputString(gameServer.ServerName) == serverName)
+                {
+                    return gameServer;
+                }
+            }
+            return null;
+        }
+        
         public GameServer GetGameServerByName (string serverName, string containerType)
         {
             var files = Directory.GetFiles (_path);
@@ -43,10 +61,33 @@ namespace Sergen.Core.Services.ServerStore
             {
                 var text = File.ReadAllText (file);
                 var gameServer = JsonConvert.DeserializeObject<GameServer> (text);
-                if (gameServer.ContainerType == containerType && gameServer.ServerName == serverName)
+                if (gameServer.ContainerType == containerType && ChatHelper.PreParseInputString(gameServer.ServerName) == serverName)
                 {
                     return gameServer;
                 }
+            }
+            return null;
+        }
+
+        public IList<GameServer> SearchGameServersByName(string serverName)
+        {
+            var files = Directory.GetFiles (_path);
+            
+            var returnServers = new List<GameServer>();
+            
+            foreach (var file in files)
+            {
+                var text = File.ReadAllText (file);
+                var gameServer = JsonConvert.DeserializeObject<GameServer> (text);
+                if (serverName.Contains(ChatHelper.PreParseInputString(gameServer.ServerName)))
+                {
+                    returnServers.Add(gameServer);
+                }
+            }
+
+            if (returnServers.Any())
+            {
+                return returnServers;
             }
             return null;
         }

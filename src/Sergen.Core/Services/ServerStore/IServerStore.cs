@@ -7,6 +7,10 @@ namespace Sergen.Core.Services.ServerStore
     {
          IList<GameServer> GetAllServers(string containerType);
 
+         GameServer GetGameServerByName(string serverName);
+         
          GameServer GetGameServerByName(string serverName, string containerType);
+         
+         IList<GameServer> SearchGameServersByName(string serverName);
     }
 }

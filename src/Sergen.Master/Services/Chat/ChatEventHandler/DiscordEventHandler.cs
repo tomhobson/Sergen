@@ -5,6 +5,8 @@ using Sergen.Core.Services.Chat.ChatResponseToken;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
+using Sergen.Core.Services.Chat.StaticHelpers;
+using Sergen.Core.Services.ServerStore;
 using Sergen.Master.Services.Chat.ChatProcessor;
 
 namespace  Sergen.Master.Services.Chat.ChatEventHandler
@@ -14,16 +16,21 @@ namespace  Sergen.Master.Services.Chat.ChatEventHandler
         private readonly DiscordSocketClient _discord;
         private readonly IChatProcessor _chatProcessor;
         private readonly IConfiguration _config;
+        private readonly IServerStore _serverStore;
+
+        private DateTime lastMsg;
 
         // DiscordSocketClient, CommandService, and IConfigurationRoot are injected automatically from the IServiceProvider
         public DiscordEventHandler (
             DiscordSocketClient discord,
             IChatProcessor chatProcessor,
-            IConfiguration config)
+            IConfiguration config,
+            IServerStore serverStore)
         {
             _discord = discord;
             _config = config;
             _chatProcessor = chatProcessor;
+            _serverStore = serverStore;
         }
 
         public async void Connect ()
@@ -37,7 +44,7 @@ namespace  Sergen.Master.Services.Chat.ChatEventHandler
 
             _discord.GuildMemberUpdated += DiscordUserUpdated;
 
-            _discord.MessageReceived += DiscordMessageRecieved;
+            _discord.MessageReceived += DiscordMessageReceived;
         }
 
         private async Task DiscordUserUpdated (SocketUser preUser, SocketUser postUser)
@@ -46,32 +53,79 @@ namespace  Sergen.Master.Services.Chat.ChatEventHandler
             {
                 foreach (var mutualGuild in postUser.MutualGuilds)
                 {
-                    var usrList = mutualGuild.Users.Where (u => u.Activity?.Name == postUser.Activity.Name).ToList ();
+                    // Get all the users in all the servers we exist in playing this game.
+                    var usrList = mutualGuild.Users.Where(u => u.Activity?.Name == postUser.Activity.Name).ToList();
                     //Assume general channel for now.
-                    if (usrList.Count > 1)
+                    SocketGuildChannel sgc;
+                    if (mutualGuild.Channels.Any(c => c.Name == "general"))
                     {
-                        SocketGuildChannel sgc;
-                        if (mutualGuild.Channels.Any (c => c.Name == "general"))
+                        sgc = mutualGuild.Channels.First(gc => gc.Name == "general");
+                    }
+                    else
+                    {
+                        // Catch all. eventually we want to use a value from the db that the guild has set.
+                        // Could probably do this with -configure
+                        sgc = mutualGuild.Channels.First();
+                    }
+                    
+                    //Make sure we don't send a loads of updates within a short period of time
+                    if (lastMsg != null && DateTime.Now.Subtract(lastMsg).Seconds <= 2)
+                    {
+                        return;
+                    }
+
+                    // Get the multiple word (people/person) playing a game.
+                    string multipleWord = "people";
+                    if (usrList.Count == 1)
+                    {
+                        multipleWord = "person";
+                    }
+                    
+                    //Decides if we have a person playing it and if we've got a server.
+                    if (sgc is IMessageChannel imc)
+                    {
+                        var parsedActivityName = ChatHelper.PreParseInputString(postUser.Activity.Name);
+                        var gameServer = _serverStore.GetGameServerByName(parsedActivityName);
+
+                        if (gameServer != null)
                         {
-                            sgc = mutualGuild.Channels.First (gc => gc.Name == "general");
+                            //Definitley got one
+                            var msg = DiscordHelper.CreateEmbeddedMessage(
+                                $"{usrList.Count} {multipleWord} playing {postUser.Activity.Name}. I've got a server for it. Enter `-run {parsedActivityName}` to start one.");
+                            await imc.SendMessageAsync(embed: msg);
                         }
                         else
                         {
-                            // Catch all. eventually we want to use a value from the db that the guild has set.
-                            // Could probably do this with -configure
-                            sgc = mutualGuild.Channels.First ();
+                            var possibleGameServers = _serverStore.SearchGameServersByName(parsedActivityName);
+
+                            if (possibleGameServers == null)
+                            {
+                                return;
+                            }
+                            
+                            //Probably got one, the server name is contained within their activity
+                            if (possibleGameServers.Count == 1)
+                            {
+                                var msg = DiscordHelper.CreateEmbeddedMessage(
+                                    $"{usrList.Count} {multipleWord} playing {postUser.Activity.Name}. I think I've got a server for it. Enter `-run {possibleGameServers[0].ServerName}` to start one.");
+                                await imc.SendMessageAsync(embed: msg);
+                            }
+                            //Almost certainly got one, just don't know which one
+                            else if (possibleGameServers.Count > 1)
+                            {
+                                var msg = DiscordHelper.CreateEmbeddedMessage(
+                                    $"{usrList.Count} {multipleWord} playing {postUser.Activity.Name}. I've got a few servers that match that title. Enter `-possible` to see if one matches what you're playing.");
+                                await imc.SendMessageAsync(embed: msg);
+                            }
                         }
 
-                        if (sgc is IMessageChannel imc)
-                        {
-                            await imc.SendMessageAsync ($"Multiple people playing: {postUser.Activity.Name}");
-                        }
+                        lastMsg = DateTime.Now;
                     }
                 }
             }
         }
 
-        private async Task DiscordMessageRecieved (SocketMessage message)
+        private async Task DiscordMessageReceived (SocketMessage message)
         {
             // The bot should never respond to itself.
             if (message.Author.Id == _discord.CurrentUser.Id)

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Rest;
 using Discord.WebSocket;
+using Sergen.Core.Services.Chat.StaticHelpers;
 
 namespace  Sergen.Core.Services.Chat.ChatResponseToken
 {
@@ -20,9 +21,9 @@ namespace  Sergen.Core.Services.Chat.ChatResponseToken
 
         public async Task<string> Respond(string response)
         {
-            var embed = await CreateEmbed(response);
+            var embed = DiscordHelper.CreateEmbeddedMessage(response);
             
-            var mes = await _responseChannel.SendMessageAsync("", false, embed);
+            var mes = await _responseChannel.SendMessageAsync(embed:embed);
             
             _lastMessagedInteractedWith = mes;
             return mes.Id.ToString();
@@ -34,7 +35,7 @@ namespace  Sergen.Core.Services.Chat.ChatResponseToken
             if(message is RestUserMessage rumess)
             {
                 
-                var embed = await CreateEmbed(update);
+                var embed = DiscordHelper.CreateEmbeddedMessage(update);
                 
                 await rumess.ModifyAsync(msg => msg.Embed = embed);
                 _lastMessagedInteractedWith = rumess;
@@ -45,23 +46,10 @@ namespace  Sergen.Core.Services.Chat.ChatResponseToken
         {
             if(_lastMessagedInteractedWith != null)
             {
-                var embed = await CreateEmbed(update);
+                var embed = DiscordHelper.CreateEmbeddedMessage(update);
                 
                 _lastMessagedInteractedWith.ModifyAsync(msg => msg.Embed = embed);
             }
-        }
-
-        private async Task<Embed> CreateEmbed(string message)
-        {
-            EmbedBuilder builder = new EmbedBuilder();
-
-            builder.WithTitle("Sergen");
-
-            builder.WithDescription(message);
-
-            builder.WithColor(Color.Green);
-            
-            return builder.Build();
         }
     }
 }
