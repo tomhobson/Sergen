@@ -9,7 +9,7 @@ namespace Sergen.Core.Services.Chat.StaticHelpers
             string allText = "";
             foreach (var stri in inputList)
             {
-                allText = allText + $"\n {stri}";
+                allText = allText + $"\n - {stri}";
             }
             return allText;
         }

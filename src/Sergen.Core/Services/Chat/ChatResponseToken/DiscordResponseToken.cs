@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System;
 using System.Threading.Tasks;
+using Discord;
 using Discord.Rest;
 using Discord.WebSocket;
 
@@ -19,7 +20,15 @@ namespace  Sergen.Core.Services.Chat.ChatResponseToken
 
         public async Task<string> Respond(string response)
         {
-            var mes = await _responseChannel.SendMessageAsync(response);
+            EmbedBuilder builder = new EmbedBuilder();
+
+            builder.WithTitle("Sergen");
+
+            builder.WithDescription(response);
+
+            builder.WithColor(Color.Red);
+            var mes = await _responseChannel.SendMessageAsync("", false, builder.Build());
+            
             _lastMessagedInteractedWith = mes;
             return mes.Id.ToString();
         }

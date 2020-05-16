@@ -38,6 +38,17 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
             // Switch statement for all commands that are constant
             switch (firstCommand)
             {
+                case "-help":
+                    icrt.Respond(@"Command list:
+                    `-ping` Will return if Sergen is alive.
+                    `-ip` Will respond the ip of the master.
+                    `-version` Will return 1.0.0 because I'm too lazy to fix the version.
+                    `-running` Will return all the running game servers for this discord server.
+                    `-possible` Will return all possible game servers.
+                    `-run {Game Server}` Will start a game server of that type.
+                    `-stop {Game Server}` Will stop a game server of that type.
+                     ");
+                    break;
                 case "-ping":
                     icrt.Respond("pong!");
                     break;
