@@ -4,8 +4,7 @@
     "Sergen.Master": {
       "commandName": "Project",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "Tokens__Discord": "NjMzMzkwOTU2MDU3NzIyODkz.Xr8NLw.Kv-7p5QxlSMAEsUd39dNwJU-xt0"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
   }
