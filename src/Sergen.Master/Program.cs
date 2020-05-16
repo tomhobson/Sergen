@@ -17,6 +17,7 @@ namespace Sergen.Master
                     config.SetBasePath(env.ContentRootPath)
                         .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                         .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                        .AddUserSecrets<Program>()
                         .AddEnvironmentVariables();
                 })
                 .Build()

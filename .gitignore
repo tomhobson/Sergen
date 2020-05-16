@@ -32,5 +32,3 @@ msbuild.wrn
 
 #Sergen specific
 server-files/
-
-launchSettings.json
