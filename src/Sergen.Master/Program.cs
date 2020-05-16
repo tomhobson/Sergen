@@ -13,9 +13,11 @@ namespace Sergen.Master
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     var env = hostingContext.HostingEnvironment;
-                    
+
                     config.SetBasePath(env.ContentRootPath)
-                        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                        .AddEnvironmentVariables();
                 })
                 .Build()
                 .Run();

@@ -20,14 +20,9 @@ namespace  Sergen.Core.Services.Chat.ChatResponseToken
 
         public async Task<string> Respond(string response)
         {
-            EmbedBuilder builder = new EmbedBuilder();
-
-            builder.WithTitle("Sergen");
-
-            builder.WithDescription(response);
-
-            builder.WithColor(Color.Red);
-            var mes = await _responseChannel.SendMessageAsync("", false, builder.Build());
+            var embed = await CreateEmbed(response);
+            
+            var mes = await _responseChannel.SendMessageAsync("", false, embed);
             
             _lastMessagedInteractedWith = mes;
             return mes.Id.ToString();
@@ -38,7 +33,10 @@ namespace  Sergen.Core.Services.Chat.ChatResponseToken
             var message = await _responseChannel.GetMessageAsync(Convert.ToUInt64(messageID));
             if(message is RestUserMessage rumess)
             {
-                await rumess.ModifyAsync(msg => msg.Content = update);
+                
+                var embed = await CreateEmbed(update);
+                
+                await rumess.ModifyAsync(msg => msg.Embed = embed);
                 _lastMessagedInteractedWith = rumess;
             }
         }
@@ -47,16 +45,23 @@ namespace  Sergen.Core.Services.Chat.ChatResponseToken
         {
             if(_lastMessagedInteractedWith != null)
             {
-                EmbedBuilder builder = new EmbedBuilder();
-
-                builder.WithTitle("Sergen");
-
-                builder.WithDescription(update);
-
-                builder.WithColor(Color.Red);
+                var embed = await CreateEmbed(update);
                 
-                _lastMessagedInteractedWith.ModifyAsync(msg => msg.Embed = builder.Build());
+                _lastMessagedInteractedWith.ModifyAsync(msg => msg.Embed = embed);
             }
+        }
+
+        private async Task<Embed> CreateEmbed(string message)
+        {
+            EmbedBuilder builder = new EmbedBuilder();
+
+            builder.WithTitle("Sergen");
+
+            builder.WithDescription(message);
+
+            builder.WithColor(Color.Green);
+            
+            return builder.Build();
         }
     }
 }
