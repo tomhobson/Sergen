@@ -47,7 +47,15 @@ namespace  Sergen.Core.Services.Chat.ChatResponseToken
         {
             if(_lastMessagedInteractedWith != null)
             {
-                _lastMessagedInteractedWith.ModifyAsync(msg => msg.Content = update);
+                EmbedBuilder builder = new EmbedBuilder();
+
+                builder.WithTitle("Sergen");
+
+                builder.WithDescription(update);
+
+                builder.WithColor(Color.Red);
+                
+                _lastMessagedInteractedWith.ModifyAsync(msg => msg.Embed = builder.Build());
             }
         }
     }
