@@ -147,7 +147,7 @@ namespace Sergen.Core.Services.Containers.Docker
             var response = await _client.Containers.CreateContainerAsync (new CreateContainerParameters 
             {
                 Image = $"{gameServer.ContainerName}:{gameServer.ContainerTag}",
-                Name = $"{serverId}-{gameServer.ServerName}",
+                Name = $"{serverId}-{gameServer.ServerName.Replace(" ", "")}",
                 ExposedPorts = portsToExpose,
                 HostConfig = new HostConfig {
                     PortBindings = portBindings,

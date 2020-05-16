@@ -89,10 +89,9 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
 
                 if (gameServer == null)
                 {
-                    
+                    await _containerInterface.StopById(serverID, icrt, serverName);
                 }
-                
-                
+
                 await _containerInterface.Stop(serverID, icrt, gameServer);
             }
         }
