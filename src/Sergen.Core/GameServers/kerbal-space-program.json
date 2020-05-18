@@ -1,5 +1,5 @@
 {
-  "serverName": "Kerbal Space Program",
+  "serverName": "Kerbal-Space-Program",
   "containerName": "gameservers/kerbal-space-program",
   "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
   "ports": {
