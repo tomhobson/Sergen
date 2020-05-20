@@ -3,7 +3,7 @@
 # Sergen
 Game server generation with curated images orchestrated by discord chat.
 
-<img src="https://github.com/tomhobson/Sergen/blob/master/screenshots/screenshot.png" alt="Screenshot of Sergen working" width="45%">
+<img src="https://github.com/tomhobson/Sergen/blob/master/screenshots/startandstop.gif" alt="Animation of Sergen working" width="45%">
 
 ## Requirements
 * Docker
