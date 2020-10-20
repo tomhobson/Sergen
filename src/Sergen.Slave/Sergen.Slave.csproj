@@ -9,10 +9,6 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Services\" />
-    <Folder Include="Services\Containers\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Sergen.Core\Sergen.Core.csproj" />
   </ItemGroup>
   <ItemGroup>

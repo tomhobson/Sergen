@@ -6,11 +6,11 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Discord;
 using Sergen.Core.Data;
 using Sergen.Core.Services.Chat.ChatResponseToken;
 using Docker.DotNet;
 using Docker.DotNet.Models;
+using Microsoft.Extensions.Logging;
 using Sergen.Core.Services.IpGetter;
 using Sergen.Core.Services.Chat.StaticHelpers;
 
@@ -22,12 +22,14 @@ namespace Sergen.Core.Services.Containers.Docker
 
         private DockerClient _client;
 
+        private readonly ILogger _logger;
         private readonly IIpGetter _ipGetter;
 
         private const int WAIT_FOR_DOCKER_MILLISECONDS = 2500;
 
-        public DockerInterface (IIpGetter ipGetter) 
+        public DockerInterface (ILogger<DockerInterface> logger, IIpGetter ipGetter) 
         {
+            _logger = logger;
             _ipGetter = ipGetter;
             var os = Environment.OSVersion;
 
@@ -51,28 +53,31 @@ namespace Sergen.Core.Services.Containers.Docker
 
         public async Task<string> Setup(IChatResponseToken icrt, GameServer gameServer)
         {
-            var progression = new Progress<JSONMessage>();
-
-            DockerContainer  dcsu = new DockerContainer(icrt, gameServer);
-            
-            progression.ProgressChanged += dcsu.HandleUpdate;
-            
-            if (gameServer.ContainerTag == null)
+            try
             {
-                gameServer.ContainerTag = "latest";
-            }
-            
-            await _client.Images.CreateImageAsync (new ImagesCreateParameters 
-                {
-                    FromImage = gameServer.ContainerName,
-                        Tag = gameServer.ContainerTag
-                },
-                new AuthConfig (),
-                progression);
+                var progression = new Progress<JSONMessage>();
 
-            _containerStore.TryAdd(dcsu.ID, dcsu);
+                DockerContainer  dcsu = new DockerContainer(icrt, gameServer);
             
-            return dcsu.ID;
+                progression.ProgressChanged += dcsu.HandleUpdate;
+
+                await _client.Images.CreateImageAsync (new ImagesCreateParameters 
+                    {
+                        FromImage = gameServer.ContainerName,
+                        Tag = gameServer.ContainerTag
+                    },
+                    new AuthConfig (),
+                    progression);
+
+                _containerStore.TryAdd(dcsu.ID, dcsu);
+            
+                return dcsu.ID;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error setting up docker container. {ex.Message}");
+                throw;
+            }
         }
 
         private void CreateDirectoriesIfNotExist(string path)
@@ -85,82 +90,92 @@ namespace Sergen.Core.Services.Containers.Docker
 
         public async Task Run (string serverId, IChatResponseToken icrt, string id) 
         {
-            _containerStore.TryGetValue(id, out DockerContainer gameServerContainer);
-
-            var gameServer = gameServerContainer.GameServer;
-
-            var portsToExpose = new Dictionary<string, EmptyStruct>();
-            var portBindings = new Dictionary<string, IList<PortBinding>>();
-            var mounts = new List<Mount>();
-
-            foreach(var port in gameServer.Ports)
+            try
             {
-                var portAssignment = port.Key;
-                if (port.Value == "udp")
-                {
-                    portAssignment = $"{port.Key}/{port.Value}";
-                }
-                
-                portsToExpose.Add(portAssignment, default(EmptyStruct));
-                portBindings.Add(portAssignment, new List<PortBinding>{ new PortBinding { HostPort = portAssignment} });
-            }
+                _containerStore.TryGetValue(id, out DockerContainer gameServerContainer);
 
-            var env = new List<string>();
+                var gameServer = gameServerContainer.GameServer;
 
-            if(gameServer.EnvironmentalVariables != null)
-            {
-                foreach(var variable in gameServer.EnvironmentalVariables)
-                {
-                    env.Add($"{variable.Key}={variable.Value}");
-                }
-            }
-            
-            //Create basic server dirs if they don't exist already
-            var basePath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            var serverFiles = Path.Combine(basePath, "server-files");
-            var serverPath = Path.Combine(serverFiles, serverId);
-            var gameFilesPath = Path.Combine(serverPath, gameServer.ServerName);
-            CreateDirectoriesIfNotExist(serverFiles);
-            CreateDirectoriesIfNotExist(serverPath);
-            CreateDirectoriesIfNotExist(gameFilesPath);
+                var portsToExpose = new Dictionary<string, EmptyStruct>();
+                var portBindings = new Dictionary<string, IList<PortBinding>>();
+                var mounts = new List<Mount>();
 
-            foreach (var bindData in gameServer.Binds)
-            {
-                string actualBind = bindData;
-                if (bindData.StartsWith("/"))
+                foreach (var port in gameServer.Ports)
                 {
-                    actualBind = bindData.Remove(0, 1);
+                    var portAssignment = port.Key;
+                    if (port.Value == "udp")
+                    {
+                        portAssignment = $"{port.Key}/{port.Value}";
+                    }
+
+                    portsToExpose.Add(portAssignment, default(EmptyStruct));
+                    portBindings.Add(portAssignment,
+                        new List<PortBinding> {new PortBinding {HostPort = portAssignment}});
                 }
 
+                var env = new List<string>();
 
-                actualBind = Path.Combine(gameFilesPath, actualBind);
-                CreateDirectoriesIfNotExist(actualBind);
-                
-                mounts.Add(new Mount()
+                if (gameServer.EnvironmentalVariables != null)
                 {
-                    Target = bindData,
-                    Source = actualBind,
-                    Type = "bind"
+                    foreach (var variable in gameServer.EnvironmentalVariables)
+                    {
+                        env.Add($"{variable.Key}={variable.Value}");
+                    }
+                }
+
+                //Create basic server dirs if they don't exist already
+                var basePath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+                var serverFiles = Path.Combine(basePath, "server-files");
+                var serverPath = Path.Combine(serverFiles, serverId);
+                var gameFilesPath = Path.Combine(serverPath, gameServer.ServerName);
+                CreateDirectoriesIfNotExist(serverFiles);
+                CreateDirectoriesIfNotExist(serverPath);
+                CreateDirectoriesIfNotExist(gameFilesPath);
+
+                foreach (var bindData in gameServer?.Binds ?? Enumerable.Empty<string>())
+                {
+                    string actualBind = bindData;
+                    if (bindData.StartsWith("/"))
+                    {
+                        actualBind = bindData.Remove(0, 1);
+                    }
+
+
+                    actualBind = Path.Combine(gameFilesPath, actualBind);
+                    CreateDirectoriesIfNotExist(actualBind);
+
+                    mounts.Add(new Mount()
+                    {
+                        Target = bindData,
+                        Source = actualBind,
+                        Type = "bind"
+                    });
+                }
+
+                var response = await _client.Containers.CreateContainerAsync(new CreateContainerParameters
+                {
+                    Image = $"{gameServer.ContainerName}:{gameServer.ContainerTag}",
+                    Name = $"{serverId}-{gameServer.ServerName.Replace(" ", "")}",
+                    ExposedPorts = portsToExpose,
+                    HostConfig = new HostConfig
+                    {
+                        PortBindings = portBindings,
+                        PublishAllPorts = true,
+                        Mounts = mounts
+                    },
+                    Env = env,
+                    Cmd = gameServer.Commands
                 });
+
+                await _client.Containers.StartContainerAsync(response.ID, null);
+
+                await icrt.UpdateLastInteractedWithMessage($"{gameServer.ServerName} available at: "
+                                                           + $"{await _ipGetter.GetIp()} With Ports: {ObjectToString.Convert(gameServer.Ports)}");
             }
-
-            var response = await _client.Containers.CreateContainerAsync (new CreateContainerParameters 
+            catch (Exception ex)
             {
-                Image = $"{gameServer.ContainerName}:{gameServer.ContainerTag}",
-                Name = $"{serverId}-{gameServer.ServerName.Replace(" ", "")}",
-                ExposedPorts = portsToExpose,
-                HostConfig = new HostConfig {
-                    PortBindings = portBindings,
-                    PublishAllPorts = true,
-                    Mounts = mounts
-                },
-                Env = env
-            });
-
-            await _client.Containers.StartContainerAsync(response.ID, null);
-
-            await icrt.UpdateLastInteractedWithMessage($"{gameServer.ServerName} available at: "
-            + $"{await _ipGetter.GetIp()} With Ports: {ObjectToString.Convert(gameServer.Ports)}");
+                _logger.LogError(ex, $"Error running docker container. {ex.Message}");
+            }
         }
 
         public async Task Stop(string serverId, IChatResponseToken icrt, GameServer gameServer)
