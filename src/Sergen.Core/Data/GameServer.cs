@@ -10,7 +10,7 @@ namespace Sergen.Core.Data
 
         public string ContainerType { get; set; }
 
-        public string ContainerTag { get; set; } = "Latest";
+        public string ContainerTag { get; set; } = "latest";
 
         public Dictionary<string, string> Ports { get; set; }
 
