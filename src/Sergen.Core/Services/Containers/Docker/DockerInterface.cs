@@ -55,9 +55,11 @@ namespace Sergen.Core.Services.Containers.Docker
         {
             try
             {
+                _logger.LogInformation($"Setting up {gameServer.ServerName}...");
+                
                 var progression = new Progress<JSONMessage>();
 
-                DockerContainer  dcsu = new DockerContainer(icrt, gameServer);
+                DockerContainer  dcsu = new DockerContainer(_logger, icrt, gameServer);
             
                 progression.ProgressChanged += dcsu.HandleUpdate;
 
@@ -70,7 +72,7 @@ namespace Sergen.Core.Services.Containers.Docker
                     progression);
 
                 _containerStore.TryAdd(dcsu.ID, dcsu);
-            
+                _logger.LogInformation($"Completed setup for {gameServer.ServerName}...");
                 return dcsu.ID;
             }
             catch (Exception ex)
@@ -93,8 +95,8 @@ namespace Sergen.Core.Services.Containers.Docker
             try
             {
                 _containerStore.TryGetValue(id, out DockerContainer gameServerContainer);
-
                 var gameServer = gameServerContainer.GameServer;
+                _logger.LogInformation($"{gameServer.ServerName} for ServerId:{serverId} starting run.");
 
                 var portsToExpose = new Dictionary<string, EmptyStruct>();
                 var portBindings = new Dictionary<string, IList<PortBinding>>();
@@ -169,6 +171,7 @@ namespace Sergen.Core.Services.Containers.Docker
 
                 await _client.Containers.StartContainerAsync(response.ID, null);
 
+                _logger.LogInformation($"{gameServer.ServerName} for ServerId:{serverId} now running.");
                 await icrt.UpdateLastInteractedWithMessage($"{gameServer.ServerName} available at: "
                                                            + $"{await _ipGetter.GetIp()} With Ports: {ObjectToString.Convert(gameServer.Ports)}");
             }
@@ -192,9 +195,10 @@ namespace Sergen.Core.Services.Containers.Docker
             
             if (gameContainers.Count() == 1)
             {
-                StopAndRemove(gameContainers[0].ID);
+                await StopAndRemove(gameContainers[0].ID);
                 
-                icrt.Respond($"Game server {gameServer.ServerName} removed.");
+                await icrt.Respond($"Game server {gameServer.ServerName} removed.");
+                _logger.LogInformation($"{gameServer.ServerName} for ServerId:{serverId} stopped and removed.");
             }
             
             if (gameContainers.Count() > 1)
@@ -206,24 +210,38 @@ namespace Sergen.Core.Services.Containers.Docker
                     runningContainerIds += $"{cont.ID} {cont.Image} {cont.Created} \n";
                 }
 
-                icrt.Respond($"Which container would you like me to stop? `-stop *containerid*`");
+                await icrt.Respond($"Which container would you like me to stop? `-stop *containerid*`");
             }
         }
 
         public async Task StopById(string serverId, IChatResponseToken icrt, string containerId)
         {
-            StopAndRemove(containerId);
-
-            icrt.Respond($"Game server {containerId} removed.");
+            var success = await StopAndRemove(containerId);
+            if (success)
+            {
+                await icrt.Respond($"Game server {containerId} removed.");   
+            }
+            else
+            {
+                await icrt.Respond("No servers to stop found.");
+            }
         }
 
-        private async Task StopAndRemove(string containerId)
+        private async Task<bool> StopAndRemove(string containerId)
         {
+            var allContainers = await _client.Containers.ListContainersAsync(new ContainersListParameters() {All = true});
+            var exists = allContainers.Any(x => x.ID == containerId);
+
+            if (exists == false)
+            {
+                return exists;
+            }
+            
             await _client.Containers.StopContainerAsync(containerId, new ContainerStopParameters()
             {
                 WaitBeforeKillSeconds = 10
             });
-            
+
             //Sleep so the daemon can stop the pod
             Thread.Sleep(WAIT_FOR_DOCKER_MILLISECONDS);
             
@@ -231,6 +249,7 @@ namespace Sergen.Core.Services.Containers.Docker
             {
                 Force = false
             });
+            return true;
         }
 
         private async Task<IEnumerable<ContainerListResponse>> GetAllContainersRanByServer(string serverId)

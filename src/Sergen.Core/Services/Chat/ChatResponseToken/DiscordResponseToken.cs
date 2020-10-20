@@ -1,7 +1,5 @@
-using System.Security.Cryptography;
 using System;
 using System.Threading.Tasks;
-using Discord;
 using Discord.Rest;
 using Discord.WebSocket;
 using Sergen.Core.Services.Chat.StaticHelpers;
@@ -48,7 +46,7 @@ namespace  Sergen.Core.Services.Chat.ChatResponseToken
             {
                 var embed = DiscordHelper.CreateEmbeddedMessage(update);
                 
-                _lastMessagedInteractedWith.ModifyAsync(msg => msg.Embed = embed);
+                await _lastMessagedInteractedWith.ModifyAsync(msg => msg.Embed = embed);
             }
         }
     }

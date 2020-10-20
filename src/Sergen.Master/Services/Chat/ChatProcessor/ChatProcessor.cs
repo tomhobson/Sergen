@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,7 +38,7 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
             switch (firstCommand)
             {
                 case "-help":
-                    icrt.Respond(@"Command list:
+                    await icrt.Respond(@"Command list:
                     `-ping` Will return if Sergen is alive.
                     `-ip` Will respond the ip of the master.
                     `-version` Will return 1.0.0 because I'm too lazy to fix the version.
@@ -50,41 +49,41 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
                      ");
                     break;
                 case "-ping":
-                    icrt.Respond("pong!");
+                    await icrt.Respond("pong!");
                     break;
                 case "-ip":
-                    icrt.Respond($"My IP Address is: {await _ipGetter.GetIp()}");
+                    await icrt.Respond($"My IP Address is: {await _ipGetter.GetIp()}");
                     break;
                 case "-whoami":
-                    icrt.Respond($"You are: {_context.GetUsername(senderID)}");
+                    await icrt.Respond($"You are: {_context.GetUsername(senderID)}");
                     break;
                 case "-version":
                     System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly ();
                     FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assembly.Location);
                     string version = fvi.FileVersion;
-                    icrt.Respond($"My version is: {version}");
+                    await icrt.Respond($"My version is: {version}");
                     break;
                 case "-running":
                     var allcontainers = ObjectToString.Convert(await _containerInterface.GetRunningContainers (serverID));
-                    icrt.Respond($"Running containers are: {allcontainers}");
+                    await icrt.Respond($"Running containers are: {allcontainers}");
                     break;
                 case "-possible":
                     var servers = _serverStore.GetAllServers (GetContainerInterfaceType ());
                     var serverNames = servers.Select (s => s.ServerName).ToList ();
                     var serverStringList = ObjectToString.Convert(serverNames);
-                    icrt.Respond($"Possible game servers are: {serverStringList}");
+                    await icrt.Respond($"Possible game servers are: {serverStringList}");
                     break;
             }
 
-            if (input.StartsWith ("-run "))
+            if (input.StartsWith ("-run ") || input.StartsWith ("-start "))
             {
                 // Time to do some work
-                var serverName = ChatHelper.PreParseInputString(input.Replace ("-run ", ""));
+                var serverName = ChatHelper.PreParseInputString(input.Replace ("-run ", "").Replace("-start ", ""));
                 var gameServer = _serverStore.GetGameServerByName (serverName, GetContainerInterfaceType ());
 
                 if (gameServer == null)
                 {
-                    icrt.Respond("Image could not be found. Find all possible game servers with -possible");
+                    await icrt.Respond("Image could not be found. Find all possible game servers with -possible");
                     return;
                 }
                 var contId = await _containerInterface.Setup(icrt, gameServer);
@@ -102,8 +101,10 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
                 {
                     await _containerInterface.StopById(serverID, icrt, serverName);
                 }
-
-                await _containerInterface.Stop(serverID, icrt, gameServer);
+                else
+                {
+                    await _containerInterface.Stop(serverID, icrt, gameServer);   
+                }
             }
         }
 
