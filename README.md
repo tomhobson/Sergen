@@ -22,7 +22,7 @@ You'll need to setup a bot with discord, found here: https://discord.com/develop
 
 Here's an article on how to do it: https://www.howtogeek.com/364225/how-to-make-your-own-discord-bot/ (just do up before the Node.js part)
 
-Get your token and update src/Sergen.Master/appsettings.json.
+Get your token and update https://github.com/tomhobson/Sergen/blob/UpdatedDocs/src/Sergen.Master/appsettings.json.
 Replace PUTBOTTOKENHERE with the token generated from https://discord.com/developers/applications.
 
 You'll need to restart the service and invite your bot, which can be done with this link:
