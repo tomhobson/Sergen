@@ -16,3 +16,17 @@ A systemd service is the recommended way to run Sergen. I create and run the ser
 * Download the latest build from the releases section. Extract it, then run ./Install.sh
 * Clone the git repo and run BuildAndInstall.sh
 
+## Setup
+
+You'll need to setup a bot with discord, found here: https://discord.com/developers/applications
+
+Here's an article on how to do it: https://www.howtogeek.com/364225/how-to-make-your-own-discord-bot/ (just do up before the Node.js part)
+
+Get your token and update src/Sergen.Master/appsettings.json.
+Replace PUTBOTTOKENHERE with the token generated from https://discord.com/developers/applications.
+
+You'll need to restart the service and invite your bot, which can be done with this link:
+https://discord.com/oauth2/authorize?client_id=123456789&scope=bot
+
+Replace 123456789 with your bot's client id.
+
