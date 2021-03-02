@@ -77,34 +77,44 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
 
             if (input.StartsWith ("-run ") || input.StartsWith ("-start "))
             {
-                // Time to do some work
-                var serverName = ChatHelper.PreParseInputString(input.Replace ("-run ", "").Replace("-start ", ""));
-                var gameServer = _serverStore.GetGameServerByName (serverName, GetContainerInterfaceType ());
-
-                if (gameServer == null)
-                {
-                    await icrt.Respond("Image could not be found. Find all possible game servers with -possible");
-                    return;
-                }
-                var contId = await _containerInterface.Setup(icrt, gameServer);
-
-                await _containerInterface.Run(serverID, icrt, contId);
+                await AttemptRun(serverID, input, icrt);
             }
             
             if (input.StartsWith ("-stop "))
             {
-                // Time to do some work
-                var serverName = ChatHelper.PreParseInputString(input.Replace ("-stop ", ""));
-                var gameServer = _serverStore.GetGameServerByName (serverName, GetContainerInterfaceType ());
+                await AttemptStop(serverID, input, icrt);
+            }
+        }
 
-                if (gameServer == null)
-                {
-                    await _containerInterface.StopById(serverID, icrt, serverName);
-                }
-                else
-                {
-                    await _containerInterface.Stop(serverID, icrt, gameServer);   
-                }
+        private async Task AttemptRun(string serverId, string input, IChatResponseToken responseToken)
+        {
+            // Time to do some work
+            var serverName = ChatHelper.PreParseInputString(input.Replace ("-run ", "").Replace("-start ", ""));
+            var gameServer = _serverStore.GetGameServerByName (serverName, GetContainerInterfaceType ());
+
+            if (gameServer == null)
+            {
+                await responseToken.Respond("Image could not be found. Find all possible game servers with -possible");
+                return;
+            }
+            var contId = await _containerInterface.Setup(responseToken, gameServer);
+
+            await _containerInterface.Run(serverId, responseToken, contId);
+        }
+
+        private async Task AttemptStop(string serverId, string input, IChatResponseToken responseToken)
+        {
+            // Time to do some work
+            var serverName = ChatHelper.PreParseInputString(input.Replace ("-stop ", ""));
+            var gameServer = _serverStore.GetGameServerByName (serverName, GetContainerInterfaceType ());
+
+            if (gameServer == null)
+            {
+                await _containerInterface.StopById(serverId, responseToken, serverName);
+            }
+            else
+            {
+                await _containerInterface.Stop(serverId, responseToken, gameServer);   
             }
         }
 
