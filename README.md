@@ -7,6 +7,11 @@ Game server generation with curated images orchestrated by discord chat.
 
 <img src="./images/startandstop.gif" alt="Animation of Sergen working" width="45%">
 
+## Supported Servers
+* Minecraft Java Edition
+* Factorio
+* Valheim
+
 ## Requirements
 * Docker
 * Dotnet 3.1 runtime
