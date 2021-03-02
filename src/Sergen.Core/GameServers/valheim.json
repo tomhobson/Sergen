@@ -1,0 +1,20 @@
+{
+    "serverName": "Valheim",
+    "containerName": "lloesche/valheim-server",
+    "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
+    "ports": {
+        "2456": "udp",
+        "2457": "udp",
+        "2458": "udp"
+    },
+    "environmentalVariables": {
+        "SERVER_NAME": "Sergen Valheim Server",
+        "WORLD_NAME": "World",
+        "SERVER_PASS": "SergenServer",
+        "SERVER_PUBLIC": "true"
+    },
+    "binds": [
+        "/opt/valheim",
+        "/config"
+    ]
+  }
