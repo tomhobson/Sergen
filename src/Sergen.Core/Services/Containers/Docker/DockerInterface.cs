@@ -24,13 +24,15 @@ namespace Sergen.Core.Services.Containers.Docker
 
         private readonly ILogger _logger;
         private readonly IIpGetter _ipGetter;
+        private readonly IServerFileStore _fileStore;
 
         private const int WAIT_FOR_DOCKER_MILLISECONDS = 2500;
 
-        public DockerInterface (ILogger<DockerInterface> logger, IIpGetter ipGetter) 
+        public DockerInterface (ILogger<DockerInterface> logger, IIpGetter ipGetter, IServerFileStore fileStore) 
         {
             _logger = logger;
             _ipGetter = ipGetter;
+            _fileStore = fileStore;
             var os = Environment.OSVersion;
 
             if (os.Platform == PlatformID.Unix) {
@@ -101,7 +103,8 @@ namespace Sergen.Core.Services.Containers.Docker
                 var portsToExpose = new Dictionary<string, EmptyStruct>();
                 var portBindings = new Dictionary<string, IList<PortBinding>>();
                 var mounts = new List<Mount>();
-
+                
+                // Now assign the ports.
                 foreach (var port in gameServer.Ports)
                 {
                     var portAssignment = port.Key;
@@ -114,9 +117,9 @@ namespace Sergen.Core.Services.Containers.Docker
                     portBindings.Add(portAssignment,
                         new List<PortBinding> {new PortBinding {HostPort = portAssignment}});
                 }
-
+                
+                // Assign the environment variables to the container
                 var env = new List<string>();
-
                 if (gameServer.EnvironmentalVariables != null)
                 {
                     foreach (var variable in gameServer.EnvironmentalVariables)
@@ -125,33 +128,13 @@ namespace Sergen.Core.Services.Containers.Docker
                     }
                 }
 
-                //Create basic server dirs if they don't exist already
-                var basePath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-                var serverFiles = Path.Combine(basePath, "server-files");
-                var serverPath = Path.Combine(serverFiles, serverId);
-                var gameFilesPath = Path.Combine(serverPath, gameServer.ServerName);
-                CreateDirectoriesIfNotExist(serverFiles);
-                CreateDirectoriesIfNotExist(serverPath);
-                CreateDirectoriesIfNotExist(gameFilesPath);
-
+                // Create basic server dirs if they don't exist already
+                var gameFilesPath = await _fileStore.GetGameServerDirectoryOrCreateIt(serverId, gameServer);
+                
+                // Create all the mounts for the containers
                 foreach (var bindData in gameServer?.Binds ?? Enumerable.Empty<string>())
                 {
-                    string actualBind = bindData;
-                    if (bindData.StartsWith("/"))
-                    {
-                        actualBind = bindData.Remove(0, 1);
-                    }
-
-
-                    actualBind = Path.Combine(gameFilesPath, actualBind);
-                    CreateDirectoriesIfNotExist(actualBind);
-
-                    mounts.Add(new Mount()
-                    {
-                        Target = bindData,
-                        Source = actualBind,
-                        Type = "bind"
-                    });
+                    mounts.Add(await CreateContainerMount(gameFilesPath, bindData));
                 }
 
                 var response = await _client.Containers.CreateContainerAsync(new CreateContainerParameters
@@ -225,6 +208,26 @@ namespace Sergen.Core.Services.Containers.Docker
             {
                 await icrt.Respond("No servers to stop found.");
             }
+        }
+
+        private async Task<Mount> CreateContainerMount(string gameFilesPath, string bindData)
+        {
+            string actualBind = bindData;
+            if (bindData.StartsWith("/"))
+            {
+                actualBind = bindData.Remove(0, 1);
+            }
+
+
+            actualBind = Path.Combine(gameFilesPath, actualBind);
+            CreateDirectoriesIfNotExist(actualBind);
+
+            return new Mount()
+            {
+                Target = bindData,
+                Source = actualBind,
+                Type = "bind"
+            };
         }
 
         private async Task<bool> StopAndRemove(string containerId)

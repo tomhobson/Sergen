@@ -1,13 +1,14 @@
 {
   "serverName": "Terraria",
-  "containerName": "ryshe/terraria",
+  "containerName": "beardedio/terraria",
   "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
   "ports": {
   "7777": "tcp"
   },
-  "environmentalVariables": null,
-  "Commands": [
-    "--world /root/.local/share/Terraria/Worlds/TestWorld.wld",
-    "--autocreate 2"
+  "environmentalVariables": {
+    "world": "World"
+  },
+  "binds": [
+    "/config"
   ]
 }

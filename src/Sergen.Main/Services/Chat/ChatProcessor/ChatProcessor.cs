@@ -16,20 +16,23 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
         private readonly IContainerInterface _containerInterface;
         private readonly IServerStore _serverStore;
         private readonly IIpGetter _ipGetter;
+        private readonly IChatAllowList _allowList;
 
         public ChatProcessor (
             IChatContext context,
             IContainerInterface containerInt,
             IServerStore serverStore,
-            IIpGetter ipGetter)
+            IIpGetter ipGetter,
+            IChatAllowList allowList)
         {
             _context = context;
             _containerInterface = containerInt;
             _serverStore = serverStore;
             _ipGetter = ipGetter;
+            _allowList = allowList;
         }
 
-        public async Task ProcessMessage (string serverID, IChatResponseToken icrt, ulong senderID, string input)
+        public async Task ProcessMessage (string serverID, IChatResponseToken icrt, string senderID, string input)
         {
             // Make the initial command case insensitive
             var firstCommand = input.Split(" ")[0].ToLower();
@@ -46,6 +49,10 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
                     `-possible` Will return all possible game servers.
                     `-run {Game Server}` Will start a game server of that type.
                     `-stop {Game Server}` Will stop a game server of that type.
+                    `-allowlist` Will show you your current allowlist.
+                    `-allowlist enable/disable` Will enable/disable the allowlist.
+                    `-allowlist add @user` Will enable that user to control servers.
+                    `-allowlist remove @user` Will stop that user from controlling servers.
                      ");
                     break;
                 case "-ping":
@@ -77,13 +84,74 @@ namespace Sergen.Master.Services.Chat.ChatProcessor
 
             if (input.StartsWith ("-run ") || input.StartsWith ("-start "))
             {
-                await AttemptRun(serverID, input, icrt);
+                if (await VerifyUser(senderID, serverID, icrt))
+                {
+                    await AttemptRun(serverID, input, icrt);
+                }
+                return;
             }
             
             if (input.StartsWith ("-stop "))
             {
-                await AttemptStop(serverID, input, icrt);
+                if (await VerifyUser(serverID, senderID, icrt))
+                {
+                    await AttemptStop(serverID, input, icrt);
+                }
+                return;
             }
+
+            if (input.StartsWith("-allowlist"))
+            {
+                if (await _allowList.IsUserAllowedToManage(serverID, senderID))
+                {
+                    if (input.StartsWith("-allowlist add "))
+                    {
+                        await _allowList.AddUser(serverID, input.Replace("-allowlist add ", ""));
+                        await icrt.Respond("User added.");
+                        return;
+                    }
+
+                    if (input.StartsWith("-allowlist remove "))
+                    {
+                        await _allowList.RemoveUser(serverID, input.Replace("-allowlist remove ", ""));
+                        await icrt.Respond("User removed.");
+                        return;
+                    }
+
+                    if (input.StartsWith("-allowlist enable"))
+                    {
+                        await _allowList.SetAllowListStatus(serverID, true);
+                        await icrt.Respond("Allow list enabled.");
+                        return;
+                    }
+
+                    if (input.StartsWith("-allowlist disable"))
+                    {
+                        await _allowList.SetAllowListStatus(serverID, false);
+                        await icrt.Respond("Allow list disabled.");
+                        return;
+                    }
+
+                    var allowList = await _allowList.GetAllowList(serverID);
+                    var rawAllowList = string.Join("\n", allowList.Select(x => x.ToString()).ToArray());
+                    await icrt.Respond("Allow list:\n" + rawAllowList);
+                    return;
+                }
+
+                await icrt.Respond("I'm not allowed to talk to you, ask your server admin to allowlist you!");
+                return;
+            }
+        }
+
+        private async Task<bool> VerifyUser(string serverId, string userId, IChatResponseToken icrt)
+        {
+            if (await _allowList.IsUserAllowed(serverId, userId))
+            {
+                return true;
+            }
+
+            await icrt.Respond("I'm not allowed to talk to you, ask your server admin to allowlist you!");
+            return false;
         }
 
         private async Task AttemptRun(string serverId, string input, IChatResponseToken responseToken)
