@@ -2,7 +2,7 @@
 Description=Sergen Daemon
 
 [Service]
-ExecStart=/opt/Sergen/Sergen.Master
+ExecStart=/opt/Sergen/Sergen.Main
 Restart=always
 User=root
 # Note Debian/Ubuntu uses 'nogroup', RHEL/Fedora uses 'nobody'
