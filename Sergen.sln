@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.29025.244
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sergen.Core", "src\Sergen.Core\Sergen.Core.csproj", "{328B3A38-6B02-44FB-B55B-A8412C331998}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sergen.Slave", "src\Sergen.Slave\Sergen.Slave.csproj", "{11DB7334-C6FE-4673-8D53-057BC03916F1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sergen.Secondary", "src\Sergen.Secondary\Sergen.Secondary.csproj", "{11DB7334-C6FE-4673-8D53-057BC03916F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sergen.Master", "src\Sergen.Master\Sergen.Master.csproj", "{75A3A0C1-8178-4AC5-A843-9354A790F701}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sergen.Main", "src\Sergen.Main\Sergen.Main.csproj", "{75A3A0C1-8178-4AC5-A843-9354A790F701}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

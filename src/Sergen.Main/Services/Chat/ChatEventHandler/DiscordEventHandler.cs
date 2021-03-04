@@ -165,7 +165,7 @@ namespace  Sergen.Master.Services.Chat.ChatEventHandler
 
             var channel = message.Channel as SocketGuildChannel;
             
-            await _chatProcessor.ProcessMessage (channel.Guild.Id.ToString(), crt, message.Author.Id, message.Content);
+            await _chatProcessor.ProcessMessage (channel.Guild.Id.ToString(), crt, message.Author.Id.ToString(), message.Content);
         }
 
         private async Task SetOrAddToLastMsgDictionary(ulong serverId)

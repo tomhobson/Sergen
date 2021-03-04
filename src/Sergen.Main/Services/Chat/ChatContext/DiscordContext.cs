@@ -29,9 +29,9 @@ namespace Sergen.Master.Services.Chat.ChatContext
             await _discord.StartAsync (); // Connect to the websocket
         }
 
-        public string GetUsername (ulong userID)
+        public string GetUsername (string userID)
         {
-            return _discord.GetUser (userID).Username;
+            return _discord.GetUser (Convert.ToUInt64(userID)).Username;
         }
     }
 }

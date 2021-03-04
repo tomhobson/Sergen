@@ -16,6 +16,7 @@
     <Folder Include="Data\" />
     <Folder Include="Services\Chat\" />
     <Folder Include="Services\Chat\ChatResponseToken\" />
+    <Folder Include="Services\Whitelist" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Dockerfile" />
