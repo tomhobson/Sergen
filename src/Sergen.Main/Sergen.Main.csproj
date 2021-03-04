@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyVersion>1.0.0</AssemblyVersion>
     <UserSecretsId>98b6922f-606a-47ea-98dc-1aa7f551990e</UserSecretsId>
+    <RootNamespace>Sergen.Master</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Services\" />
@@ -18,7 +19,7 @@
     <PackageReference Include="Discord.Net" Version="2.1.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sergen.Slave\Sergen.Slave.csproj" />
     <ProjectReference Include="..\Sergen.Core\Sergen.Core.csproj" />
+    <ProjectReference Include="..\Sergen.Secondary\Sergen.Secondary.csproj" />
   </ItemGroup>
 </Project>
