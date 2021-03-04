@@ -5,19 +5,18 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Sergen.Core.Services;
 using Sergen.Core.Services.Containers;
 using Sergen.Core.Services.Containers.Docker;
 using Sergen.Core.Services.IpGetter;
 using Sergen.Core.Services.ServerFileStore;
 using Sergen.Core.Services.ServerStore;
-using Sergen.Master.Services;
-using Sergen.Master.Services.Chat;
-using Sergen.Master.Services.Chat.ChatContext;
-using Sergen.Master.Services.Chat.ChatEventHandler;
-using Sergen.Master.Services.Chat.ChatProcessor;
+using Sergen.Main.Services;
+using Sergen.Main.Services.Chat.ChatContext;
+using Sergen.Main.Services.Chat.ChatEventHandler;
+using Sergen.Main.Services.Chat.ChatProcessor;
+using Sergen.Main.Services.Chat.ChatWhitelist;
 
-namespace Sergen.Master
+namespace Sergen.Main
 {
     public class Startup
     {

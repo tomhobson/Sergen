@@ -6,9 +6,10 @@ using Sergen.Core.Services.Chat.StaticHelpers;
 using Sergen.Core.Services.Containers;
 using Sergen.Core.Services.IpGetter;
 using Sergen.Core.Services.ServerStore;
-using Sergen.Master.Services.Chat.ChatContext;
+using Sergen.Main.Services.Chat.ChatContext;
+using Sergen.Main.Services.Chat.ChatWhitelist;
 
-namespace Sergen.Master.Services.Chat.ChatProcessor
+namespace Sergen.Main.Services.Chat.ChatProcessor
 {
     public class ChatProcessor : IChatProcessor
     {

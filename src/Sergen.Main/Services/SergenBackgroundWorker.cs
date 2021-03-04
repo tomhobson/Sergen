@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Sergen.Master.Services.Chat.ChatEventHandler;
+using Sergen.Main.Services.Chat.ChatEventHandler;
 
-namespace Sergen.Master.Services
+namespace Sergen.Main.Services
 {
     public class SergenBackgroundWorker : IHostedService
     {

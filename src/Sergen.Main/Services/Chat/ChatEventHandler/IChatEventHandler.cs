@@ -1,4 +1,4 @@
-namespace  Sergen.Master.Services.Chat.ChatEventHandler
+namespace  Sergen.Main.Services.Chat.ChatEventHandler
 {
     public interface IChatEventHandler
     {

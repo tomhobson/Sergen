@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Sergen.Core.Services.Chat.ChatResponseToken;
 
-namespace  Sergen.Master.Services.Chat.ChatProcessor
+namespace  Sergen.Main.Services.Chat.ChatProcessor
 {
     public interface IChatProcessor
     {

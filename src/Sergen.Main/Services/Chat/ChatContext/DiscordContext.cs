@@ -3,7 +3,7 @@ using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 
-namespace Sergen.Master.Services.Chat.ChatContext
+namespace Sergen.Main.Services.Chat.ChatContext
 {
     public class DiscordContext : IChatContext
     {

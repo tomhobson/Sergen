@@ -7,10 +7,10 @@ using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Sergen.Core.Services;
-using Sergen.Master.Data;
+using Sergen.Core.Services.ServerFileStore;
+using Sergen.Main.Data;
 
-namespace Sergen.Master.Services.Chat
+namespace Sergen.Main.Services.Chat.ChatWhitelist
 {
     public class DiscordAllowList : IChatAllowList
     {
@@ -46,7 +46,7 @@ namespace Sergen.Master.Services.Chat
             
             if (!allowList.Enabled)
             {
-                return false;
+                return true;
             }
             
             if (allowList?.AllowedIds?.Contains(UserId) == true || await IsUserAllowedToManage(serverId, UserId))

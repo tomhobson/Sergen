@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Sergen.Core.Data;
 
-namespace Sergen.Core.Services
+namespace Sergen.Core.Services.ServerFileStore
 {
     public interface IServerFileStore
     {

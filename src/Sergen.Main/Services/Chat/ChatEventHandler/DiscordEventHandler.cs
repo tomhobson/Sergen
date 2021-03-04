@@ -2,16 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Sergen.Core.Services.Chat.ChatResponseToken;
 using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Sergen.Core.Services.Chat.ChatResponseToken;
 using Sergen.Core.Services.Chat.StaticHelpers;
 using Sergen.Core.Services.ServerStore;
-using Sergen.Master.Services.Chat.ChatProcessor;
+using Sergen.Main.Services.Chat.ChatProcessor;
 
-namespace  Sergen.Master.Services.Chat.ChatEventHandler
+namespace  Sergen.Main.Services.Chat.ChatEventHandler
 {
     public class DiscordEventHandler : IChatEventHandler
     {

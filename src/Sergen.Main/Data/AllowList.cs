@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Sergen.Master.Data
+namespace Sergen.Main.Data
 {
     public class AllowList
     {

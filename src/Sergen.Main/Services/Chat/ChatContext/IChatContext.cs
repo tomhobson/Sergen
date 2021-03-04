@@ -1,4 +1,4 @@
-namespace  Sergen.Master.Services.Chat.ChatContext
+namespace  Sergen.Main.Services.Chat.ChatContext
 {
     public interface IChatContext
     {

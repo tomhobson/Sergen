@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Sergen.Master.Data;
 
-namespace Sergen.Master.Services.Chat
+namespace Sergen.Main.Services.Chat.ChatWhitelist
 {
     public interface IChatAllowList
     {

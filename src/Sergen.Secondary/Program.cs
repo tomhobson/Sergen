@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-namespace Sergen.Slave
+namespace Sergen.Secondary
 {
     public class Program
     {
