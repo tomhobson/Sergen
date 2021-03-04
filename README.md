@@ -5,6 +5,8 @@
 # Sergen
 Game server generation with curated images orchestrated by discord chat.
 
+Try it out here: https://discord.gg/aJpFaS2U
+
 <img src="./images/startandstop.gif" alt="Animation of Sergen working" width="45%">
 
 ## Supported Servers
