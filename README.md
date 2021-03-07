@@ -14,6 +14,8 @@ Try it out here: https://discord.gg/aJpFaS2U
 * Factorio
 * Valheim
 
+If there's any servers you'd desperately like to see, feel free to open an issue.
+
 ## Requirements
 * Docker
 * Dotnet 3.1 runtime
