@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Sergen.Core.Data;
@@ -11,6 +10,8 @@ using Sergen.Core.Services.Chat.ChatResponseToken;
 using Docker.DotNet;
 using Docker.DotNet.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Sergen.Core.Options;
 using Sergen.Core.Services.IpGetter;
 using Sergen.Core.Services.Chat.StaticHelpers;
 using Sergen.Core.Services.ServerFileStore;
@@ -24,14 +25,16 @@ namespace Sergen.Core.Services.Containers.Docker
         private DockerClient _client;
 
         private readonly ILogger _logger;
+        private readonly SteamLoginOptions _steamLoginOptions;
         private readonly IIpGetter _ipGetter;
         private readonly IServerFileStore _fileStore;
 
         private const int WAIT_FOR_DOCKER_MILLISECONDS = 2500;
 
-        public DockerInterface (ILogger<DockerInterface> logger, IIpGetter ipGetter, IServerFileStore fileStore) 
+        public DockerInterface (ILogger<DockerInterface> logger, IOptions<SteamLoginOptions> steamLoginOptions, IIpGetter ipGetter, IServerFileStore fileStore) 
         {
             _logger = logger;
+            _steamLoginOptions = steamLoginOptions.Value;
             _ipGetter = ipGetter;
             _fileStore = fileStore;
             var os = Environment.OSVersion;
@@ -121,10 +124,23 @@ namespace Sergen.Core.Services.Containers.Docker
                 
                 // Assign the environment variables to the container
                 var env = new List<string>();
+
                 if (gameServer.EnvironmentalVariables != null)
                 {
                     foreach (var variable in gameServer.EnvironmentalVariables)
                     {
+                        if (variable.Value == "{$STEAM_USER}")
+                        {
+                            env.Add($"{variable.Key}={_steamLoginOptions.Username}");    
+                            continue;
+                        }
+
+                        if (variable.Value == "{$STEAM_PASS}")
+                        {
+                            env.Add($"{variable.Key}={_steamLoginOptions.Password}");
+                            continue;
+                        }
+                        
                         env.Add($"{variable.Key}={variable.Value}");
                     }
                 }

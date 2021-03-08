@@ -2,9 +2,11 @@
 using Discord.WebSocket;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Sergen.Core.Options;
 using Sergen.Core.Services.Containers;
 using Sergen.Core.Services.Containers.Docker;
 using Sergen.Core.Services.IpGetter;
@@ -20,16 +22,28 @@ namespace Sergen.Main
 {
     public class Startup
     {
+        private readonly IConfiguration _configuration;
+        
+        public Startup(IConfiguration config)
+        {
+            _configuration = config;
+        }
+        
+        
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddOptions();
+            
             services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
             {
                 // Add discord to the collection
                 LogLevel = LogSeverity.Verbose, // Tell the logger to give Verbose amount of info
                 MessageCacheSize = 1000 // Cache 1,000 messages per channel
             }));
+
+            services.Configure<SteamLoginOptions>(_configuration.GetSection(nameof(SteamLoginOptions)));
             
             services.AddHostedService<SergenBackgroundWorker>();
             services.AddTransient<IChatProcessor, ChatProcessor>();
