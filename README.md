@@ -1,4 +1,4 @@
-<img src="./images/SergenIconColoured.png" width="500" height="auto">
+<img src="./images/SergenIconColoured.png" width="400" height="auto">
 
 [![CodeScene Code Health](https://codescene.io/projects/9083/status-badges/code-health)](https://codescene.io/projects/9083) ![.NET Build And Release](https://github.com/tomhobson/Sergen/workflows/.NET%20Build%20And%20Release/badge.svg) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -13,6 +13,8 @@ Try it out here: https://discord.gg/aJpFaS2U
 * Minecraft Java Edition
 * Factorio
 * Valheim
+
+If there's any servers you'd desperately like to see, feel free to open an issue.
 
 ## Requirements
 * Docker
@@ -31,7 +33,7 @@ You'll need to setup a bot with discord, found here: https://discord.com/develop
 
 Here's an article on how to do it: https://www.howtogeek.com/364225/how-to-make-your-own-discord-bot/ (just do up before the Node.js part)
 
-Get your token and update https://github.com/tomhobson/Sergen/blob/master/src/Sergen.Master/appsettings.json.
+Get your token and update https://github.com/tomhobson/Sergen/blob/master/src/Sergen.Main/appsettings.json.
 Replace PUTBOTTOKENHERE with the token generated from https://discord.com/developers/applications.
 
 You'll need to restart the service and invite your bot, which can be done with this link:
