@@ -54,7 +54,7 @@ namespace Sergen.Core.Services.Containers.Docker
         {
             //Get all containers that start with the server id
             var containers = await GetAllContainersRanByServer(serverId);
-            return containers.Select (cnt => $"Image: {cnt.Image} Status: {cnt.Status}").ToList ();
+            return containers.Select (cnt => $"Image: {cnt.Image} State: {cnt.State}").ToList ();
         }
 
         public async Task<string> Setup(IChatResponseToken icrt, GameServer gameServer)
@@ -216,14 +216,16 @@ namespace Sergen.Core.Services.Containers.Docker
 
         public async Task StopById(string serverId, IChatResponseToken icrt, string containerId)
         {
+            var messageId = await icrt.Respond($"Stopping game server {containerId}.");
+            
             var success = await StopAndRemove(containerId);
             if (success)
             {
-                await icrt.Respond($"Game server {containerId} removed.");   
+                await icrt.Update(messageId, $"Game server {containerId} removed.");
             }
             else
             {
-                await icrt.Respond("No servers to stop found.");
+                await icrt.Update(messageId, "No servers to stop found.");
             }
         }
 

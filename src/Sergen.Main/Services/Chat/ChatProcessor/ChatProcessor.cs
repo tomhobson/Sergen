@@ -66,18 +66,18 @@ namespace Sergen.Main.Services.Chat.ChatProcessor
                     await icrt.Respond($"You are: {_context.GetUsername(senderID)}");
                     break;
                 case "-version":
-                    System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly ();
+                    System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
                     FileVersionInfo fvi = FileVersionInfo.GetVersionInfo (assembly.Location);
                     string version = fvi.FileVersion;
                     await icrt.Respond($"My version is: {version}");
                     break;
                 case "-running":
-                    var allcontainers = ObjectToString.Convert(await _containerInterface.GetRunningContainers (serverID));
+                    var allcontainers = ObjectToString.Convert(await _containerInterface.GetRunningContainers(serverID));
                     await icrt.Respond($"Running containers are: {allcontainers}");
                     break;
                 case "-possible":
-                    var servers = _serverStore.GetAllServers (GetContainerInterfaceType ());
-                    var serverNames = servers.Select (s => s.ServerName).ToList ();
+                    var servers = _serverStore.GetAllServers(GetContainerInterfaceType());
+                    var serverNames = servers.Select(s => s.ServerName).ToList();
                     var serverStringList = ObjectToString.Convert(serverNames);
                     await icrt.Respond($"Possible game servers are: {serverStringList}");
                     break;
