@@ -192,12 +192,14 @@ namespace Sergen.Core.Services.Containers.Docker
                 await icrt.Respond("No servers to stop found.");
                 return;
             }
-            
+
             if (gameContainers.Count() == 1)
             {
+                var messageId = await icrt.Respond($"Stopping game server {gameServer.ServerName}.");
+                
                 await StopAndRemove(gameContainers[0].ID);
                 
-                await icrt.Respond($"Game server {gameServer.ServerName} removed.");
+                await icrt.Update(messageId, $"Game server {gameServer.ServerName} removed.");
                 _logger.LogInformation($"{gameServer.ServerName} for ServerId:{serverId} stopped and removed.");
             }
             
