@@ -85,7 +85,7 @@ namespace Sergen.Main.Services.Chat.ChatProcessor
 
             if (input.StartsWith ("-run ") || input.StartsWith ("-start "))
             {
-                if (await VerifyUser(senderID, serverID, icrt))
+                if (await VerifyUser(serverID, senderID, icrt))
                 {
                     await AttemptRun(serverID, input, icrt);
                 }

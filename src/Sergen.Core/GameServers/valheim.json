@@ -9,7 +9,7 @@
     },
     "environmentalVariables": {
         "SERVER_NAME": "Sergen Valheim Server",
-        "WORLD_NAME": "bangbangitscrashytim",
+        "WORLD_NAME": "World",
         "SERVER_PASS": "SergenServer",
         "SERVER_PUBLIC": "true"
     },
