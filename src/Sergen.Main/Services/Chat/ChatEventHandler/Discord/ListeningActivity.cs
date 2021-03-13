@@ -14,7 +14,7 @@ namespace Sergen.Main.Services.Chat.ChatEventHandler.Discord
         {
             Name = name;
             Details = String.Empty;
-            Type = ActivityType.CustomStatus;
+            Type = ActivityType.Listening;
             Flags = ActivityProperties.None;
         }
     }

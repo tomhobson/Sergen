@@ -20,6 +20,7 @@ namespace  Sergen.Main.Services.Chat.ChatEventHandler.Discord
         private readonly IChatProcessor _chatProcessor;
         private readonly IConfiguration _config;
         private readonly IServerStore _serverStore;
+        private readonly ListeningActivity _activity;
         
         private Dictionary<ulong, DateTime> _lastMsgPerServer;
 
@@ -36,6 +37,7 @@ namespace  Sergen.Main.Services.Chat.ChatEventHandler.Discord
             _config = config;
             _chatProcessor = chatProcessor;
             _serverStore = serverStore;
+            _activity = new ListeningActivity("-help");
         }
 
         public async void Connect ()
@@ -51,7 +53,7 @@ namespace  Sergen.Main.Services.Chat.ChatEventHandler.Discord
             _discord.MessageReceived += DiscordMessageReceived;
             _lastMsgPerServer = new Dictionary<ulong, DateTime>();
 
-            await _discord.SetActivityAsync(new ListeningActivity("Listening to -help"));
+            await _discord.SetActivityAsync(_activity);
         }
 
         /// <summary>
