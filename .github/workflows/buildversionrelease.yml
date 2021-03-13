@@ -12,6 +12,8 @@ jobs:
         steps:
             - name: Delete Latest Release
               uses: liudonghua123/delete-release-action@v1
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
                 release_name: 'latest'
             - uses: actions/checkout@v2
