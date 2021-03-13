@@ -26,6 +26,9 @@ jobs:
             - name: run minver
               id: version
               uses: thefringeninja/action-minver@master
+              with:
+                # Optional. Specifies which part of the version to auto-increment.
+                auto-increment: patch
             - name: Build
               run: dotnet build --configuration Release --no-restore
             - name: Zip release
