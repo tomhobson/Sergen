@@ -1,3 +1,4 @@
+using System;
 using Discord;
 
 namespace Sergen.Main.Services.Chat.ChatEventHandler.Discord
@@ -12,6 +13,7 @@ namespace Sergen.Main.Services.Chat.ChatEventHandler.Discord
         public ListeningActivity(string name)
         {
             Name = name;
+            Details = String.Empty;
             Type = ActivityType.CustomStatus;
             Flags = ActivityProperties.None;
         }
