@@ -11,7 +11,7 @@ using Sergen.Core.Services.Chat.StaticHelpers;
 using Sergen.Core.Services.ServerStore;
 using Sergen.Main.Services.Chat.ChatProcessor;
 
-namespace  Sergen.Main.Services.Chat.ChatEventHandler
+namespace  Sergen.Main.Services.Chat.ChatEventHandler.Discord
 {
     public class DiscordEventHandler : IChatEventHandler
     {
@@ -51,7 +51,7 @@ namespace  Sergen.Main.Services.Chat.ChatEventHandler
             _discord.MessageReceived += DiscordMessageReceived;
             _lastMsgPerServer = new Dictionary<ulong, DateTime>();
 
-            await _discord.SetGameAsync("Listening to -help");
+            await _discord.SetActivityAsync(new ListeningActivity("Listening to -help"));
         }
 
         /// <summary>

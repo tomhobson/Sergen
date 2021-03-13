@@ -15,6 +15,7 @@ using Sergen.Core.Services.ServerStore;
 using Sergen.Main.Services;
 using Sergen.Main.Services.Chat.ChatContext;
 using Sergen.Main.Services.Chat.ChatEventHandler;
+using Sergen.Main.Services.Chat.ChatEventHandler.Discord;
 using Sergen.Main.Services.Chat.ChatProcessor;
 using Sergen.Main.Services.Chat.ChatWhitelist;
 
