@@ -8,8 +8,6 @@ namespace Sergen.Core.Services.Chat.StaticHelpers
         {
             EmbedBuilder builder = new EmbedBuilder();
 
-            builder.WithTitle("Sergen");
-
             builder.WithDescription(message);
 
             builder.WithColor(Color.Green);
