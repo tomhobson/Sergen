@@ -10,11 +10,10 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - name: Delete
-              uses: ame-yu/action-delete-latest-release@v2
+            - name: Delete Latest Release
+              uses: liudonghua123/delete-release-action@v1
               with:
-                github_token: ${{ secrets.GITHUB_TOKEN }}
-                name: latest
+                release_name: 'latest'
             - uses: actions/checkout@v2
               with:
                 fetch-depth: 0
