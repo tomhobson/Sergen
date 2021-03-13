@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <AssemblyVersion>1.0.1</AssemblyVersion>
     <UserSecretsId>98b6922f-606a-47ea-98dc-1aa7f551990e</UserSecretsId>
     <RootNamespace>Sergen.Main</RootNamespace>
   </PropertyGroup>

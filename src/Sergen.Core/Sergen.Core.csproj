@@ -2,7 +2,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Sergen.Core</RootNamespace>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
     <UserSecretsId>f96cb332-a3f0-45b5-83ec-3ec039b36f12</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
