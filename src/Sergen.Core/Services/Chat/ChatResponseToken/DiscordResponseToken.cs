@@ -12,10 +12,13 @@ namespace  Sergen.Core.Services.Chat.ChatResponseToken
 
         RestUserMessage _lastMessagedInteractedWith;
 
-        public DiscordResponseToken (ISocketMessageChannel channel)
+        public DiscordResponseToken (ISocketMessageChannel channel, DateTime sendTime)
         {
             _responseChannel = channel;
+            SendTime = sendTime;
         }
+
+        public DateTime SendTime { get; }
 
         public async Task<string> Respond(string response)
         {

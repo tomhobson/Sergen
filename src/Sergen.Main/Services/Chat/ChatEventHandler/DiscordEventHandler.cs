@@ -161,7 +161,7 @@ namespace  Sergen.Main.Services.Chat.ChatEventHandler
             if (message.Author.Id == _discord.CurrentUser.Id)
                 return;
 
-            IChatResponseToken crt = new DiscordResponseToken(message.Channel);
+            IChatResponseToken crt = new DiscordResponseToken(message.Channel, message.Timestamp.DateTime);
 
             var channel = message.Channel as SocketGuildChannel;
             

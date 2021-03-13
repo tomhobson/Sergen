@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -57,7 +58,8 @@ namespace Sergen.Main.Services.Chat.ChatProcessor
                      ");
                     break;
                 case "-ping":
-                    await icrt.Respond("pong!");
+                    var processingTime = DateTime.Now.Subtract(icrt.SendTime);
+                    await icrt.Respond(processingTime.Milliseconds + "ms");
                     break;
                 case "-ip":
                     await icrt.Respond($"My IP Address is: {await _ipGetter.GetIp()}");
