@@ -50,6 +50,8 @@ namespace  Sergen.Main.Services.Chat.ChatEventHandler
             _discord.GuildMemberUpdated += DiscordUserUpdated;
             _discord.MessageReceived += DiscordMessageReceived;
             _lastMsgPerServer = new Dictionary<ulong, DateTime>();
+
+            await _discord.SetGameAsync("Listening to -help");
         }
 
         /// <summary>
