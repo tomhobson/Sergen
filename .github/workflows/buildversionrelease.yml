@@ -10,52 +10,21 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
+            - name: Delete
+              uses: ame-yu/action-delete-latest-release@v2
+              with:
+                github_token: ${{ secrets.GITHUB_TOKEN }}
             - uses: actions/checkout@v2
-              with:
-                fetch-depth: 0
-            - name: Delete Latest Release
-              uses: liudonghua123/delete-release-action@v1
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                release_id: 'latest'
-                suppress_errors: true
             - name: Setup .NET Core
               uses: actions/setup-dotnet@v1
               with:
                 dotnet-version: 3.1.201
             - name: Install dependencies
               run: dotnet restore
-            - name: run minver
-              id: version
-              uses: thefringeninja/action-minver@master
-              with:
-                # Optional. Specifies which part of the version to auto-increment.
-                auto-increment: patch
             - name: Build
               run: dotnet build --configuration Release --no-restore
             - name: Zip release
               run: cd src/Sergen.Main/bin/Release/netcoreapp3.1 ; zip -r ../../../../../release.zip . * ; cd ../../../../..
-            - name: Create Versioned Release
-              id: create_release_versioned
-              uses: actions/create-release@v1
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                tag_name: ${{ steps.version.outputs.version }}
-                release_name: ${{ steps.version.outputs.version }}
-                draft: false
-                prerelease: false
-            - name: Upload Versioned Release Asset
-              id: upload-release-asset_versioned
-              uses: actions/upload-release-asset@v1
-              env:
-                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              with:
-                upload_url: ${{ steps.create_release_versioned.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-                asset_path: ./release.zip
-                asset_name: release.zip
-                asset_content_type: application/zip
             - name: Create Release
               id: create_release
               uses: actions/create-release@v1
