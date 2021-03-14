@@ -16,7 +16,7 @@ namespace  Sergen.Main.Services.Chat.ChatEventHandler.Discord
     public class DiscordEventHandler : IChatEventHandler
     {
         private readonly ILogger _logger;
-        private readonly DiscordSocketClient _discord;
+        private readonly DiscordShardedClient _discord;
         private readonly IChatProcessor _chatProcessor;
         private readonly IConfiguration _config;
         private readonly IServerStore _serverStore;
@@ -27,7 +27,7 @@ namespace  Sergen.Main.Services.Chat.ChatEventHandler.Discord
         // DiscordSocketClient, CommandService, and IConfigurationRoot are injected automatically from the IServiceProvider
         public DiscordEventHandler (
             ILogger<DiscordEventHandler> logger,
-            DiscordSocketClient discord,
+            DiscordShardedClient discord,
             IChatProcessor chatProcessor,
             IConfiguration config,
             IServerStore serverStore)

@@ -37,11 +37,11 @@ namespace Sergen.Main
         {
             services.AddOptions();
             
-            services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
+            services.AddSingleton(new DiscordShardedClient(new DiscordSocketConfig
             {
                 // Add discord to the collection
                 LogLevel = LogSeverity.Verbose, // Tell the logger to give Verbose amount of info
-                MessageCacheSize = 1000 // Cache 1,000 messages per channel
+                MessageCacheSize = 1000, // Cache 1,000 messages per channel
             }));
 
             services.Configure<SteamLoginOptions>(_configuration.GetSection(nameof(SteamLoginOptions)));

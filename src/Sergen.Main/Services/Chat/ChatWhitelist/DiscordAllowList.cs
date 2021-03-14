@@ -15,11 +15,11 @@ namespace Sergen.Main.Services.Chat.ChatWhitelist
     public class DiscordAllowList : IChatAllowList
     {
         private readonly ILogger<DiscordAllowList> _logger;
-        private readonly DiscordSocketClient _discord;
+        private readonly DiscordShardedClient _discord;
         private readonly IServerFileStore _fileStore;
         private const string ALLOW_LIST_NAME = "allowList.json";
 
-        public DiscordAllowList(ILogger<DiscordAllowList> logger, DiscordSocketClient discord, IConfiguration config, IServerFileStore fileStore)
+        public DiscordAllowList(ILogger<DiscordAllowList> logger, DiscordShardedClient discord, IConfiguration config, IServerFileStore fileStore)
         {
             _logger = logger;
             string discordToken = config["Tokens:Discord"]; // Get the discord token from the config file

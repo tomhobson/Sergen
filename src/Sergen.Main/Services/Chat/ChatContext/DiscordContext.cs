@@ -7,12 +7,12 @@ namespace Sergen.Main.Services.Chat.ChatContext
 {
     public class DiscordContext : IChatContext
     {
-        private readonly DiscordSocketClient _discord;
+        private readonly DiscordShardedClient _discord;
         private readonly IConfiguration _config;
 
         // DiscordSocketClient, CommandService, and IConfigurationRoot are injected automatically from the IServiceProvider
         public DiscordContext (
-            DiscordSocketClient discord,
+            DiscordShardedClient discord,
             IConfiguration config)
         {
             _discord = discord;
