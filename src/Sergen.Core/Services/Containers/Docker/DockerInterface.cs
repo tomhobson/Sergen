@@ -13,7 +13,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Sergen.Core.Options;
 using Sergen.Core.Services.IpGetter;
-using Sergen.Core.Services.Chat.StaticHelpers;
 using Sergen.Core.Services.ServerFileStore;
 
 namespace Sergen.Core.Services.Containers.Docker 
@@ -104,46 +103,10 @@ namespace Sergen.Core.Services.Containers.Docker
                 var gameServer = gameServerContainer.GameServer;
                 _logger.LogInformation($"{gameServer.ServerName} for ServerId:{serverId} starting run.");
 
-                var portsToExpose = new Dictionary<string, EmptyStruct>();
-                var portBindings = new Dictionary<string, IList<PortBinding>>();
+                
                 var mounts = new List<Mount>();
-                
-                // Now assign the ports.
-                foreach (var port in gameServer.Ports)
-                {
-                    var portAssignment = port.Key;
-                    if (port.Value == "udp")
-                    {
-                        portAssignment = $"{port.Key}/{port.Value}";
-                    }
-
-                    portsToExpose.Add(portAssignment, default(EmptyStruct));
-                    portBindings.Add(portAssignment,
-                        new List<PortBinding> {new PortBinding {HostPort = portAssignment}});
-                }
-                
-                // Assign the environment variables to the container
-                var env = new List<string>();
-
-                if (gameServer.EnvironmentalVariables != null)
-                {
-                    foreach (var variable in gameServer.EnvironmentalVariables)
-                    {
-                        if (variable.Value == "{$STEAM_USER}")
-                        {
-                            env.Add($"{variable.Key}={_steamLoginOptions.Username}");    
-                            continue;
-                        }
-
-                        if (variable.Value == "{$STEAM_PASS}")
-                        {
-                            env.Add($"{variable.Key}={_steamLoginOptions.Password}");
-                            continue;
-                        }
-                        
-                        env.Add($"{variable.Key}={variable.Value}");
-                    }
-                }
+                var portAssignments = await GeneratePortAssignments(gameServer);
+                var environmentVariables = await GenerateEnvironmentVariables(gameServer);
 
                 // Create basic server dirs if they don't exist already
                 var gameFilesPath = await _fileStore.GetGameServerDirectoryOrCreateIt(serverId, gameServer);
@@ -158,14 +121,14 @@ namespace Sergen.Core.Services.Containers.Docker
                 {
                     Image = $"{gameServer.ContainerName}:{gameServer.ContainerTag}",
                     Name = $"{serverId}-{gameServer.ServerName.Replace(" ", "")}",
-                    ExposedPorts = portsToExpose,
+                    ExposedPorts = portAssignments.Item2,
                     HostConfig = new HostConfig
                     {
-                        PortBindings = portBindings,
+                        PortBindings = portAssignments.Item1,
                         PublishAllPorts = true,
                         Mounts = mounts
                     },
-                    Env = env,
+                    Env = environmentVariables,
                     Cmd = gameServer.Commands
                 });
 
@@ -173,7 +136,7 @@ namespace Sergen.Core.Services.Containers.Docker
 
                 _logger.LogInformation($"{gameServer.ServerName} for ServerId:{serverId} now running.");
                 await icrt.UpdateLastInteractedWithMessage($"{gameServer.ServerName} available at: "
-                                                           + $"{await _ipGetter.GetIp()} With Ports: {ObjectToString.Convert(gameServer.Ports)}");
+                                                           + $"{await _ipGetter.GetIp()} With Ports:\n {String.Join("\n", portAssignments.Item2.Select(x => x.Key))}");
             }
             catch (Exception ex)
             {
@@ -298,6 +261,85 @@ namespace Sergen.Core.Services.Containers.Docker
 
             //var serverContainers = allContainers.Where(x => x.Names.Any(y => y.Contains(serverId)));
             return serverContainers;
+        }
+
+        private async Task<IList<string>> GetCurrentlyUsedPorts()
+        {
+            var allContainers =
+                await _client.Containers.ListContainersAsync(new ContainersListParameters() {Limit = 100});
+
+            return allContainers
+                .SelectMany(x => x.Ports
+                    .Select(y => y.PublicPort.ToString())).ToList();
+        }
+
+        /// <summary>
+        /// This gets the current ports being used by docker and increments them until there's a free one.
+        /// </summary>
+        /// <param name="gameServer">The gameserver you'd like to expose ports for</param>
+        /// <returns>A tuple of Port bindings and Ports to expose</returns>
+        private async Task<Tuple<Dictionary<string, IList<PortBinding>>, Dictionary<string, EmptyStruct>>>
+            GeneratePortAssignments(GameServer gameServer)
+        {
+            var portsExposed = await GetCurrentlyUsedPorts();
+            var portBindings = new Dictionary<string, IList<PortBinding>>();
+            var portsToExpose = new Dictionary<string, EmptyStruct>();
+                
+            // Now assign the ports.
+            foreach (var port in gameServer.Ports.OrderBy(x => x.Key))
+            {
+                int portNumber = Convert.ToInt32(port.Key);
+                bool isPortFree = portsExposed.Contains(port.Key) == false;
+
+                while (isPortFree == false)
+                {
+                    portNumber++;
+                    isPortFree = portsExposed.Contains(portNumber.ToString()) == false;
+                }
+                    
+                portsExposed.Add(portNumber.ToString());
+
+                var portAssignment = portNumber.ToString();
+                if (port.Value == "udp")
+                {
+                    portAssignment = $"{portNumber.ToString()}/{port.Value}";
+                }
+
+                portsToExpose.Add(portAssignment, default);
+                portBindings.Add(portAssignment,
+                    new List<PortBinding> {new PortBinding {HostPort = portAssignment}});
+            }
+            
+            return new Tuple<Dictionary<string, IList<PortBinding>>, Dictionary<string, EmptyStruct>>(
+                portBindings, portsToExpose);
+        }
+
+        private async Task<IList<string>> GenerateEnvironmentVariables(GameServer gameServer)
+        {
+            // Assign the environment variables to the container
+            var env = new List<string>();
+            
+            if (gameServer.EnvironmentalVariables != null)
+            {
+                foreach (var variable in gameServer.EnvironmentalVariables)
+                {
+                    if (variable.Value == "{$STEAM_USER}")
+                    {
+                        env.Add($"{variable.Key}={_steamLoginOptions.Username}");    
+                        continue;
+                    }
+
+                    if (variable.Value == "{$STEAM_PASS}")
+                    {
+                        env.Add($"{variable.Key}={_steamLoginOptions.Password}");
+                        continue;
+                    }
+                        
+                    env.Add($"{variable.Key}={variable.Value}");
+                }
+            }
+
+            return env;
         }
     }
 }
