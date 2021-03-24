@@ -125,7 +125,7 @@ namespace Sergen.Core.Services.Containers.Docker
                     HostConfig = new HostConfig
                     {
                         PortBindings = portAssignments.Item1,
-                        PublishAllPorts = true,
+                        PublishAllPorts = false,
                         Mounts = mounts
                     },
                     Env = environmentVariables,
@@ -300,13 +300,15 @@ namespace Sergen.Core.Services.Containers.Docker
                 portsExposed.Add(portNumber.ToString());
 
                 var portAssignment = portNumber.ToString();
+                string internalPortAssignment = port.Key;
                 if (port.Value == "udp")
                 {
                     portAssignment = $"{portNumber.ToString()}/{port.Value}";
+                    internalPortAssignment = $"{port.Key}/{port.Value}";
                 }
 
-                portsToExpose.Add(portAssignment, default);
-                portBindings.Add(portAssignment,
+                portsToExpose.Add(internalPortAssignment, default);
+                portBindings.Add(internalPortAssignment,
                     new List<PortBinding> {new PortBinding {HostPort = portAssignment}});
             }
             
