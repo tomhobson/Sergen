@@ -142,7 +142,6 @@ namespace Sergen.Main.Services.Chat.ChatProcessor
                 }
 
                 await icrt.Respond("I'm not allowed to talk to you, ask your server admin to allowlist you!");
-                return;
             }
         }
 

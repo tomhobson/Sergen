@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -10,8 +11,8 @@ namespace Sergen.Core.Services.ServerFileStore
         public async Task<string> GetServerPathOrCreateIt(string serverId)
         {
             // Create basic server dirs if they don't exist already
-            var basePath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            var serverFiles = Path.Combine(basePath, "server-files");
+            var basePath = Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location);
+            var serverFiles = Path.Combine(basePath ?? throw new InvalidOperationException("Could not find entry assembly."), "server-files");
             var serverPath = Path.Combine(serverFiles, serverId);
             await CreateDirectoriesIfNotExist(serverFiles);
             await CreateDirectoriesIfNotExist(serverPath);

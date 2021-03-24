@@ -87,7 +87,7 @@ namespace Sergen.Core.Services.Containers.Docker
             }
         }
 
-        private void CreateDirectoriesIfNotExist(string path)
+        private async Task CreateDirectoriesIfNotExist(string path)
         {
             if(Directory.Exists(path) == false)
             {
@@ -100,10 +100,15 @@ namespace Sergen.Core.Services.Containers.Docker
             try
             {
                 _containerStore.TryGetValue(id, out DockerContainer gameServerContainer);
+                if (gameServerContainer == null)
+                {
+                    _logger.LogWarning($"Couldn't find container with id {id}");
+                    return;
+                }
+                
                 var gameServer = gameServerContainer.GameServer;
                 _logger.LogInformation($"{gameServer.ServerName} for ServerId:{serverId} starting run.");
 
-                
                 var mounts = new List<Mount>();
                 var portAssignments = await GeneratePortAssignments(gameServer);
                 var environmentVariables = await GenerateEnvironmentVariables(gameServer);
@@ -112,7 +117,7 @@ namespace Sergen.Core.Services.Containers.Docker
                 var gameFilesPath = await _fileStore.GetGameServerDirectoryOrCreateIt(serverId, gameServer);
                 
                 // Create all the mounts for the containers
-                foreach (var bindData in gameServer?.Binds ?? Enumerable.Empty<string>())
+                foreach (var bindData in gameServer.Binds ?? Enumerable.Empty<string>())
                 {
                     mounts.Add(await CreateContainerMount(gameFilesPath, bindData));
                 }
@@ -175,7 +180,7 @@ namespace Sergen.Core.Services.Containers.Docker
                     runningContainerIds += $"{cont.ID} {cont.Image} {cont.Created} \n";
                 }
 
-                await icrt.Respond($"Which container would you like me to stop? `-stop *containerid*`");
+                await icrt.Respond($"Which container would you like me to stop? `-stop *containerid*`\n Containers: {runningContainerIds}");
             }
         }
 
@@ -204,7 +209,7 @@ namespace Sergen.Core.Services.Containers.Docker
 
 
             actualBind = Path.Combine(gameFilesPath, actualBind);
-            CreateDirectoriesIfNotExist(actualBind);
+            await CreateDirectoriesIfNotExist(actualBind);
 
             return new Mount()
             {
