@@ -1,9 +1,9 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-stretch-slim AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:5.0-stretch-slim AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-stretch AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:5.0-stretch AS build
 WORKDIR /src
 COPY ["Sergen.Master/Sergen.Master.csproj", "Sergen.Master/"]
 RUN dotnet restore "Sergen.Master/Sergen.Master.csproj"

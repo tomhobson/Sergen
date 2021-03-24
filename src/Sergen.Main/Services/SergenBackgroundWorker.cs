@@ -18,11 +18,13 @@ namespace Sergen.Main.Services
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Starting discord chat connection.");
             _chat.Connect();
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Stopping discord chat connection.");
         }
     }
 }

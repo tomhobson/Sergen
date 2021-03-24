@@ -10,7 +10,7 @@ namespace Sergen.Core.Services.ServerStore
 {
     public class JsonServerStore : IServerStore
     {
-        private string _path = "";
+        private string _path;
 
         public JsonServerStore ()
         {

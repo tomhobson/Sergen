@@ -37,7 +37,6 @@ namespace Sergen.Main.Services.Chat.ChatWhitelist
             allowList.Enabled = enabled;
             
             await File.WriteAllTextAsync(await GetAllowListLocation(serverId), JsonConvert.SerializeObject(allowList));
-            return;
         }
 
         public async Task<bool> IsUserAllowed(string serverId, string UserId)
