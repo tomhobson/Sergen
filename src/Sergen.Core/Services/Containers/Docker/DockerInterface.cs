@@ -226,7 +226,7 @@ namespace Sergen.Core.Services.Containers.Docker
 
             if (exists == false)
             {
-                return exists;
+                return false;
             }
             
             await _client.Containers.StopContainerAsync(containerId, new ContainerStopParameters()

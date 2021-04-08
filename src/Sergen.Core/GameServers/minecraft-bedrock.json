@@ -1,0 +1,17 @@
+{
+    "serverName": "Minecraft-Bedrock",
+    "containerName": "itzg/minecraft-bedrock-server",
+    "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
+    "ports": {
+    "19132": "udp"
+    },
+    "environmentalVariables": {
+        "EULA": "True",
+        "FORCE_REDOWNLOAD": "True",
+        "GAMEMODE": "survival",
+        "DIFFICULTY": "normal"
+    },
+    "binds": [
+        "/data"
+    ]
+  }
