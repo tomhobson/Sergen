@@ -17,6 +17,7 @@ Try it out here: https://discord.gg/aJpFaS2U
 
 ## Supported Servers
 * Minecraft Java Edition
+* Minecraft Bedrock Edition
 * Factorio
 * Valheim
 
