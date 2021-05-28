@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Sergen.Slave": {
+    "Sergen.Secondary": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

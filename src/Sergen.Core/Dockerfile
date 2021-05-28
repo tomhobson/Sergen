@@ -5,16 +5,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:5.0-stretch AS build
 WORKDIR /src
-COPY ["Sergen.Master/Sergen.Master.csproj", "Sergen.Master/"]
-RUN dotnet restore "Sergen.Master/Sergen.Master.csproj"
+COPY ["Sergen.Main/Sergen.Main.csproj", "Sergen.Main/"]
+RUN dotnet restore "Sergen.Main/Sergen.Main.csproj"
 COPY . .
 WORKDIR "/src/Sergen"
-RUN dotnet build "Sergen.Master.csproj" -c Release -o /app
+RUN dotnet build "Sergen.Main.csproj" -c Release -o /app
 
 FROM build AS publish
-RUN dotnet publish "Sergen.Master.csproj" -c Release -o /app
+RUN dotnet publish "Sergen.Main.csproj" -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "Sergen.Master.dll"]
+ENTRYPOINT ["dotnet", "Sergen.Main.dll"]

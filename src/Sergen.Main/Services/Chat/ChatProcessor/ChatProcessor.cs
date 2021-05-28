@@ -45,7 +45,7 @@ namespace Sergen.Main.Services.Chat.ChatProcessor
                 case "-help":
                     await icrt.Respond(@"Command list:
                     `-ping` Will return if Sergen is alive.
-                    `-ip` Will respond the ip of the master.
+                    `-ip` Will respond the ip of the main.
                     `-version` Will return 1.0.0 because I'm too lazy to fix the version.
                     `-running` Will return all the running game servers for this discord server.
                     `-possible` Will return all possible game servers.
