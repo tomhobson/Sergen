@@ -27,7 +27,6 @@ If there's any servers you'd desperately like to see, feel free to open an issue
 * Windows/Linux (Not tested on a mac)
 * Docker
 * Dotnet 5.0 runtime
-* completely open firewall (or at least all the ports you want to use open)
 
 ## Installation
 A systemd service is the recommended way to run Sergen. I create and run the service within the install scripts. If you don't want it setup this way, don't use the install scripts.
