@@ -1,15 +1,15 @@
 {
   "serverName": "OpenTTD",
-  "containerName": "redditopenttd/openttd:latest",
+  "containerName": "bateau/openttd",
   "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
   "ports": {
     "3979": "tcp",
     "3979": "ucp"
   },
   "environmentalVariables": {
-    "loadgame": "exit"
+    "loadgame": "last-autosave"
   },
   "binds": [
-    "/config"
+    "/home/openttd/.openttd"
   ]
 }
