@@ -3,10 +3,10 @@
   "containerName": "redditopenttd/openttd:latest",
   "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
   "ports": {
-    "3979": "tcp"
+    "3979": "tcp",
+    "3979": "ucp"
   },
   "environmentalVariables": {
-    "loadgame": "exit"
   },
   "binds": [
     "/config"
