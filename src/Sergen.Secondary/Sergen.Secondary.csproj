@@ -4,7 +4,7 @@
     <RootNamespace>Sergen.Secondary</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Docker.DotNet" Version="3.125.5" />
+    <PackageReference Include="Docker.DotNet" Version="3.125.10" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
