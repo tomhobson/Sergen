@@ -62,7 +62,7 @@ namespace Sergen.Main.Services.Chat.ChatProcessor
                     await icrt.Respond(processingTime.Milliseconds + "ms");
                     break;
                 case "-ip":
-                    await icrt.Respond($"My IP Address is: {await _ipGetter.GetIp()}");
+                    await icrt.Respond($"My IP address is: {await _ipGetter.GetIp()}");
                     break;
                 case "-whoami":
                     await icrt.Respond($"You are: {_context.GetUsername(senderID)}");

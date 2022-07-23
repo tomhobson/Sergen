@@ -141,7 +141,7 @@ namespace Sergen.Core.Services.Containers.Docker
 
                 _logger.LogInformation($"{gameServer.ServerName} for ServerId:{serverId} now running.");
                 await icrt.UpdateLastInteractedWithMessage($"{gameServer.ServerName} available at: "
-                                                           + $"{await _ipGetter.GetIp()} With Ports:\n {String.Join("\n", portAssignments.Item2.Select(x => x.Key))}");
+                                                           + $"{await _ipGetter.GetIp()} with ports:\n {String.Join("\n", portAssignments.Item2.Select(x => x.Key))}");
             }
             catch (Exception ex)
             {
