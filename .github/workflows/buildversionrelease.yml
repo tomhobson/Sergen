@@ -18,13 +18,13 @@ jobs:
             - name: Setup .NET Core
               uses: actions/setup-dotnet@v1
               with:
-                dotnet-version: 5.0.x
+                dotnet-version: 6.0.x
             - name: Install dependencies
               run: dotnet restore
             - name: Build
               run: dotnet build --configuration Release --no-restore
             - name: Zip release
-              run: cd src/Sergen.Main/bin/Release/netcoreapp5.0 ; zip -r ../../../../../release.zip . * ; cd ../../../../..
+              run: cd src/Sergen.Main/bin/Release/net6.0 ; zip -r ../../../../../release.zip . * ; cd ../../../../..
             - name: Create Release
               id: create_release
               uses: actions/create-release@v1
