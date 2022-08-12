@@ -27,7 +27,7 @@ If there's any servers you'd desperately like to see, feel free to open an issue
 ## Requirements
 * Windows/Linux (Not tested on a mac)
 * Docker
-* Dotnet 5.0 runtime
+* Dotnet 6.0 runtime
 
 ## Installation
 A systemd service is the recommended way to run Sergen. I create and run the service within the install scripts. If you don't want it setup this way, don't use the install scripts.
