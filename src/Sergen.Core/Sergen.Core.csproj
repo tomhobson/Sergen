@@ -11,7 +11,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.16.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Discord.Net" Version="2.4.0" />
-    <PackageReference Include="Docker.DotNet" Version="3.125.10" />
+    <PackageReference Include="Docker.DotNet" Version="3.125.12" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
