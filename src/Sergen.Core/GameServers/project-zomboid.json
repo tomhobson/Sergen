@@ -1,0 +1,27 @@
+{
+    "serverName": "Project-Zomboid",
+    "containerName": "cyrale/project-zomboid",
+    "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
+    "ports": {
+        "8766": "udp",
+        "8767": "udp",
+        "16261": "udp",
+        "16262": "udp",
+        "16263": "udp",
+        "16264": "udp",
+        "16265": "udp",
+        "16266": "udp",
+        "16267": "udp",
+        "16268": "udp",
+        "16269": "udp",
+        "16270": "udp"
+    },
+    "environmentalVariables": {
+        "SERVER_NAME": "Sergen Zomboid Server",
+        "ADMIN_PASSWORD": "zomboid-admin-password"
+    },
+    "binds": [
+        "/server-data",
+        "/server-files"
+    ]
+  }
