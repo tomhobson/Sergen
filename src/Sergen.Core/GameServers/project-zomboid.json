@@ -17,7 +17,7 @@
         "16270": "udp"
     },
     "environmentalVariables": {
-        "SERVER_NAME": "Sergen Zomboid Server",
+        "SERVER_NAME": "SergenZomboidServer",
         "ADMIN_PASSWORD": "zomboid-admin-password"
     },
     "binds": [
