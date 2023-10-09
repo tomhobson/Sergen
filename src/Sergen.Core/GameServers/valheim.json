@@ -1,6 +1,6 @@
 {
     "serverName": "Valheim",
-    "containerName": "mbround18/valheim",
+    "containerName": "ghcr.io/lloesche/valheim-server",
     "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
     "ports": {
         "2456": "udp",
@@ -8,21 +8,13 @@
         "2458": "udp"
     },
     "environmentalVariables": {
-        "PORT": "2456",
-        "NAME": "Sergen Valheim Server",
-        "WORLD": "World",
-        "PASSWORD": "SergenServer",
-        "PUBLIC": "1",
-        "UPDATE_ON_STARTUP": "1",
-        "TZ": "Europe/London",
-        "AUTO_UPDATE": "1",
-        "AUTO_UPDATE_PAUSE_WITH_PLAYERS": "1",
-        "AUTO_BACKUP": "1",
-        "PUID": "1001",
-        "PGID": "1001"
+        "SERVER_NAME": "Sergen Valheim Server",
+        "WORLD_NAME": "World",
+        "SERVER_PASS": "SergenServer",
+        "SERVER_PUBLIC": "true"
     },
     "binds": [
-        "/home/steam/.config/unity3d/IronGate/Valheim",
-        "/home/steam/valheim"
+        "/opt/valheim",
+        "/config"
     ]
   }
