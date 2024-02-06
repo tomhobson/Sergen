@@ -167,8 +167,8 @@ namespace Sergen.Core.Services.Containers.Docker
                 
                 await StopAndRemove(gameContainers[0].ID);
                 
-                await icrt.Update(messageId, $"Game server {gameServer.ServerName} removed.");
-                _logger.LogInformation($"{gameServer.ServerName} for ServerId:{serverId} stopped and removed.");
+                await icrt.Update(messageId, $"Game server {gameServer.ServerName} stopped.");
+                _logger.LogInformation($"{gameServer.ServerName} for ServerId:{serverId} stopped and removed from docker.");
             }
             
             if (gameContainers.Count() > 1)
@@ -191,7 +191,7 @@ namespace Sergen.Core.Services.Containers.Docker
             var success = await StopAndRemove(containerId);
             if (success)
             {
-                await icrt.Update(messageId, $"Game server {containerId} removed.");
+                await icrt.Update(messageId, $"Game server {containerId} stopped.");
             }
             else
             {
@@ -264,7 +264,6 @@ namespace Sergen.Core.Services.Containers.Docker
                     serverContainers.Add(container);
             }
 
-            //var serverContainers = allContainers.Where(x => x.Names.Any(y => y.Contains(serverId)));
             return serverContainers;
         }
 
