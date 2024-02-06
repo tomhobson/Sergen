@@ -1,6 +1,6 @@
 {
     "serverName": "Project-Zomboid",
-    "containerName": "cyrale/project-zomboid",
+    "containerName": "renegademaster/zomboid-dedicated-server",
     "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
     "ports": {
         "8766": "udp",
@@ -18,10 +18,11 @@
     },
     "environmentalVariables": {
         "SERVER_NAME": "SergenZomboidServer",
-        "ADMIN_PASSWORD": "zomboid-admin-password"
+        "ADMIN_PASSWORD": "zomboid-admin-password",
+        "SERVER_PASSWORD": "12345"
     },
     "binds": [
-        "/server-data",
-        "/server-files"
+        "/ZomboidConfig",
+        "/ZomboidDedicatedServer"
     ]
   }

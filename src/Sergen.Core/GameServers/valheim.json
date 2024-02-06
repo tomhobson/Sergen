@@ -1,6 +1,6 @@
 {
     "serverName": "Valheim",
-    "containerName": "lloesche/valheim-server",
+    "containerName": "ghcr.io/lloesche/valheim-server",
     "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
     "ports": {
         "2456": "udp",
