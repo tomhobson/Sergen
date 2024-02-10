@@ -55,6 +55,7 @@ namespace Sergen.Main.Services.Chat.ChatProcessor
                     `-allowlist enable/disable` Will enable/disable the allowlist.
                     `-allowlist add @user` Will enable that user to control servers.
                     `-allowlist remove @user` Will stop that user from controlling servers.
+                    `-prune` Will prune all dangling docker containers on the host.
                      ");
                     break;
                 case "-ping":
@@ -82,6 +83,12 @@ namespace Sergen.Main.Services.Chat.ChatProcessor
                     var serverNames = servers.Select(s => s.ServerName).ToList();
                     var serverStringList = ObjectToString.Convert(serverNames);
                     await icrt.Respond($"Possible game servers are: {serverStringList}");
+                    break;
+                case "-prune":
+                    if (await VerifyUser(serverID, senderID, icrt))
+                    {
+                        await _containerInterface.Prune(icrt);
+                    }
                     break;
             }
 

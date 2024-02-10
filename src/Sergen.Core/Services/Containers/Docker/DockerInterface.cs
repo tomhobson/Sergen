@@ -199,6 +199,14 @@ namespace Sergen.Core.Services.Containers.Docker
             }
         }
 
+        public async Task Prune(IChatResponseToken icrt)
+        {
+            ulong spaceFreed = 0;
+            spaceFreed += (await _client.Containers.PruneContainersAsync()).SpaceReclaimed;
+            spaceFreed += (await _client.Images.PruneImagesAsync()).SpaceReclaimed;
+            await icrt.Respond($"Pruned {spaceFreed} bytes of containers and images.");
+        }
+
         private async Task<Mount> CreateContainerMount(string gameFilesPath, string bindData)
         {
             string actualBind = bindData;

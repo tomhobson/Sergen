@@ -16,5 +16,7 @@ namespace Sergen.Core.Services.Containers
         Task Stop(string serverId, IChatResponseToken icrt, GameServer gameServer);
 
         Task StopById(string serverId, IChatResponseToken icrt, string containerId);
+
+        Task Prune(IChatResponseToken icrt);
     }
 }
