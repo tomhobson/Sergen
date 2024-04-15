@@ -6,8 +6,7 @@
     "25565": "tcp"
     },
     "environmentalVariables": {
-        "EULA": "TRUE",
-        "FORCE_REDOWNLOAD": "True"
+        "EULA": "TRUE"
     },
     "binds": [
         "/data"
