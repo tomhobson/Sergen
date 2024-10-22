@@ -41,14 +41,14 @@ if command -v apt > /dev/null; then
     fi
 
     # Check if dotnet6 is installed
-    if ! dpkg -l | grep -q dotnet6; then
-        echo "dotnet6 not found, installing."
-        apt install -y dotnet6
+    if ! dpkg -l | grep -q dotnet-runtime-6.0; then
+        echo "dotnet-runtime-6.0 not found, installing."
+        apt install -y dotnet-runtime-6.0
     else
-        echo "dotnet6 is already installed, skipping installation."
+        echo "dotnet-runtime-6.0 is already installed, skipping installation."
     fi
 
-    echo "podman and dotnet6 installation checks complete."
+    echo "podman and dotnet-runtime-6.0 installation checks complete."
 else
     echo "apt not found. Skipping podman and dotnet6 installation."
 fi
