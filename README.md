@@ -17,10 +17,8 @@ Try it out here: https://discord.gg/aJpFaS2U
 
 ## Supported Servers
 * Minecraft Java Edition
-* Minecraft Bedrock Edition
 * Factorio
 * Valheim
-* OpenTTD
 
 If there's any servers you'd desperately like to see, feel free to open an issue.
 
