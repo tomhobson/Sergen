@@ -18,8 +18,8 @@ cp Sergen.service /lib/systemd/system/Sergen.service
 # Ensure the target directory exists
 mkdir -p /opt/Sergen
 
-# Copy all files to /opt/Sergen
-yes | cp -rf ../* /opt/Sergen
+# Copy all files to /opt/Sergen, but don't overwrite appsettings.*.json files
+find ../ -type f ! -name 'appsettings.*.json' -exec cp -rf {} /opt/Sergen/ \;
 
 # Reload systemd services and start the service
 systemctl daemon-reload
