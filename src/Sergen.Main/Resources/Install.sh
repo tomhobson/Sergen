@@ -24,3 +24,31 @@ yes | cp -rf ../* /opt/Sergen
 # Reload systemd services and start the service
 systemctl daemon-reload
 systemctl start Sergen.service
+
+# Check if apt package manager exists on the system
+if command -v apt > /dev/null; then
+    echo "apt found, checking for podman and dotnet6."
+
+    # Update package lists
+    apt update
+
+    # Check if podman is installed
+    if ! dpkg -l | grep -q podman; then
+        echo "podman not found, installing."
+        apt install -y podman
+    else
+        echo "podman is already installed, skipping installation."
+    fi
+
+    # Check if dotnet6 is installed
+    if ! dpkg -l | grep -q dotnet6; then
+        echo "dotnet6 not found, installing."
+        apt install -y dotnet6
+    else
+        echo "dotnet6 is already installed, skipping installation."
+    fi
+
+    echo "podman and dotnet6 installation checks complete."
+else
+    echo "apt not found. Skipping podman and dotnet6 installation."
+fi
