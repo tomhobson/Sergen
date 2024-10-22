@@ -38,14 +38,100 @@ namespace Sergen.Core.Services.Containers.Docker
             _fileStore = fileStore;
             var os = Environment.OSVersion;
 
-            if (os.Platform == PlatformID.Unix) {
-                _client = new DockerClientConfiguration (
-                        new Uri ("unix:///var/run/docker.sock"))
-                    .CreateClient ();
-            } else if (os.Platform == PlatformID.Win32NT) {
-                _client = new DockerClientConfiguration (
-                        new Uri ("npipe://./pipe/docker_engine"))
-                    .CreateClient ();
+            try
+            {
+                if (os.Platform == PlatformID.Unix)
+                {
+                    // Try rootless Podman socket first
+                    var podmanSocket = Environment.GetEnvironmentVariable("XDG_RUNTIME_DIR");
+                    if (!string.IsNullOrEmpty(podmanSocket))
+                    {
+                        try
+                        {
+                            _client = new DockerClientConfiguration(
+                                new Uri($"unix://{podmanSocket}/podman/podman.sock"))
+                                .CreateClient();
+                            _logger.LogInformation("Connected to Podman rootless socket.");
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, $"Error connecting to Podman rootless socket. {ex.Message}");
+                        }
+                    }
+        
+                    // Try Podman rootful socket if rootless failed or was not applicable
+                    if (_client == null)
+                    {
+                        try
+                        {
+                            _client = new DockerClientConfiguration(
+                                new Uri("unix:///run/podman/podman.sock"))
+                                .CreateClient();
+                            _logger.LogInformation("Connected to Podman rootful socket.");
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, $"Error connecting to Podman rootful socket. {ex.Message}");
+                        }
+                    }
+        
+                    // Try Docker socket as a fallback if Podman failed
+                    if (_client == null)
+                    {
+                        try
+                        {
+                            _client = new DockerClientConfiguration(
+                                new Uri("unix:///var/run/docker.sock"))
+                                .CreateClient();
+                            _logger.LogInformation("Connected to Docker socket.");
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, $"Error connecting to Docker socket. {ex.Message}");
+                        }
+                    }
+                }
+                else if (os.Platform == PlatformID.Win32NT)
+                {
+                    // Try named pipe for Docker
+                    try
+                    {
+                        _client = new DockerClientConfiguration(
+                            new Uri("npipe://./pipe/docker_engine"))
+                            .CreateClient();
+                        _logger.LogInformation("Connected to Docker named pipe.");
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, $"Error connecting to Docker named pipe. {ex.Message}");
+                    }
+        
+                    // Try TCP endpoint for Podman (if configured to expose it)
+                    if (_client == null)
+                    {
+                        try
+                        {
+                            _client = new DockerClientConfiguration(
+                                new Uri("tcp://localhost:2375")) // Adjust the port as needed
+                                .CreateClient();
+                            _logger.LogInformation("Connected to Podman TCP socket.");
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, $"Error connecting to Podman TCP socket. {ex.Message}");
+                        }
+                    }
+                }
+        
+                // Log if no connection could be made
+                if (_client == null)
+                {
+                    _logger.LogError("Failed to connect to both Docker and Podman.");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error setting up docker client: {ex.Message}");
             }
         }
 
