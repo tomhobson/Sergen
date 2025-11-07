@@ -401,7 +401,7 @@ namespace Sergen.Core.Services.Containers.Docker
                 string internalPortAssignment = port.Key;
                 if (port.Value == "udp")
                 {
-                    portAssignment = $"{portNumber.ToString()}/{port.Value}";
+                    portAssignment = portNumber.ToString();
                     internalPortAssignment = $"{port.Key}/{port.Value}";
                 }
 
