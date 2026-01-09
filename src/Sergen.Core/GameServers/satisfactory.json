@@ -1,7 +1,7 @@
 {
   "serverName": "Satisfactory",
   "containerName": "wolveix/satisfactory-server",
-  "containerTag": "stable",
+  "containerTag": "latest",
   "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
   "ports": {
     "7777": "tcp",
