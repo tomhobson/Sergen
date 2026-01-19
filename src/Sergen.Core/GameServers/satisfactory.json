@@ -1,0 +1,19 @@
+{
+  "serverName": "Satisfactory",
+  "containerName": "wolveix/satisfactory-server",
+  "containerTag": "latest",
+  "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
+  "ports": {
+    "7777": "tcp",
+    "8888": "tcp"
+  },
+  "environmentalVariables": {
+    "MAXPLAYERS": "4",
+    "PGID": "1000",
+    "PUID": "1000",
+    "STEAMBETA": "false"
+  },
+  "binds": [
+    "/config"
+  ]
+}
