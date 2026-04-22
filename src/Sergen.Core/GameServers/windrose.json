@@ -1,0 +1,17 @@
+{
+  "serverName": "Windrose",
+  "containerName": "indifferentbroccoli/windrose-server-docker",
+  "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
+  "ports": {
+    "7777": "udp"
+  },
+  "environmentalVariables": {
+    "SERVER_NAME": "Sergen Windrose Server",
+    "MAX_PLAYERS": "8",
+    "INVITE_CODE": "SergenServer666",
+    "SERVER_PASSWORD": "SergenServer"
+  },
+  "binds": [
+    "/opt/windrose:/home/steam/server-files"
+  ]
+}
