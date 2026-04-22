@@ -12,6 +12,6 @@
     "SERVER_PASSWORD": "SergenServer"
   },
   "binds": [
-    "/opt/windrose:/home/steam/server-files"
+    "/home/steam/server-files"
   ]
 }
