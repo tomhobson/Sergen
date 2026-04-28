@@ -335,7 +335,7 @@ namespace Sergen.Core.Services.Containers.Docker
             {
                 Force = false
             });
-            return true;
+            return true;                
         }
 
         private async Task<IEnumerable<ContainerListResponse>> GetAllContainersRanByServer(string serverId)
@@ -368,7 +368,9 @@ namespace Sergen.Core.Services.Containers.Docker
 
             return allContainers
                 .SelectMany(x => x.Ports
-                    .Select(y => y.PublicPort.ToString())).ToList();
+                    .Where(p => p.PublicPort > 0)
+                    .Select(p => $"{p.PublicPort}/{p.Type?.ToLower() ?? "tcp"}"))
+                .ToList();
         }
 
         /// <summary>
@@ -376,42 +378,67 @@ namespace Sergen.Core.Services.Containers.Docker
         /// </summary>
         /// <param name="gameServer">The gameserver you'd like to expose ports for</param>
         /// <returns>A tuple of Port bindings and Ports to expose</returns>
-        private async Task<Tuple<Dictionary<string, IList<PortBinding>>, Dictionary<string, EmptyStruct>>>
+        private async Task<
+                Tuple<Dictionary<string, IList<PortBinding>>, Dictionary<string, EmptyStruct>>>
             GeneratePortAssignments(GameServer gameServer)
         {
-            var portsExposed = await GetCurrentlyUsedPorts();
+            var usedPorts = await GetCurrentlyUsedPorts();
+
             var portBindings = new Dictionary<string, IList<PortBinding>>();
             var portsToExpose = new Dictionary<string, EmptyStruct>();
-                
-            // Now assign the ports.
-            foreach (var port in gameServer.Ports.OrderBy(x => x.Key))
+
+            foreach (var port in gameServer.Ports.OrderBy(x => int.Parse(x.Key)))
             {
-                int portNumber = Convert.ToInt32(port.Key);
-                bool isPortFree = portsExposed.Contains(port.Key) == false;
+                int basePort = int.Parse(port.Key);
 
-                while (isPortFree == false)
+                var protocols = (port.Value ?? "tcp")
+                    .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(p => p.Trim().ToLower())
+                    .ToList();
+
+                int portNumber = basePort;
+
+                while (true)
                 {
+                    bool allFree = true;
+
+                    foreach (var protocol in protocols)
+                    {
+                        string candidate = $"{portNumber}/{protocol}";
+
+                        if (usedPorts.Contains(candidate))
+                        {
+                            allFree = false;
+                            break;
+                        }
+                    }
+
+                    if (allFree)
+                        break;
+
                     portNumber++;
-                    isPortFree = portsExposed.Contains(portNumber.ToString()) == false;
                 }
-                    
-                portsExposed.Add(portNumber.ToString());
 
-                var portAssignment = portNumber.ToString();
-                string internalPortAssignment = port.Key;
-                if (port.Value == "udp")
+                // Reserve ALL protocols at the SAME port
+                foreach (var protocol in protocols)
                 {
-                    portAssignment = portNumber.ToString();
-                    internalPortAssignment = $"{port.Key}/{port.Value}";
-                }
+                    string candidate = $"{portNumber}/{protocol}";
+                    usedPorts.Add(candidate);
 
-                portsToExpose.Add(internalPortAssignment, default);
-                portBindings.Add(internalPortAssignment,
-                    new List<PortBinding> {new PortBinding {HostPort = portAssignment}});
+                    string containerPort = $"{basePort}/{protocol}";
+                    portsToExpose[containerPort] = default;
+
+                    portBindings[containerPort] = new List<PortBinding>
+                    {
+                        new PortBinding
+                        {
+                            HostPort = portNumber.ToString()
+                        }
+                    };
+                }
             }
-            
-            return new Tuple<Dictionary<string, IList<PortBinding>>, Dictionary<string, EmptyStruct>>(
-                portBindings, portsToExpose);
+
+            return Tuple.Create(portBindings, portsToExpose);
         }
 
         private async Task<IList<string>> GenerateEnvironmentVariables(GameServer gameServer)
