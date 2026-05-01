@@ -3,7 +3,7 @@
   "containerName": "indifferentbroccoli/windrose-server-docker",
   "containerType": "Sergen.Core.Services.Containers.Docker.DockerInterface",
   "ports": {
-    "7777": "udp"
+    "7777": "udp, tcp"
   },
   "environmentalVariables": {
     "SERVER_NAME": "Sergen Windrose Server",
