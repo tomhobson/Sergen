@@ -335,7 +335,7 @@ namespace Sergen.Core.Services.Containers.Docker
             {
                 Force = false
             });
-            return true;                
+            return true;   
         }
 
         private async Task<IEnumerable<ContainerListResponse>> GetAllContainersRanByServer(string serverId)
